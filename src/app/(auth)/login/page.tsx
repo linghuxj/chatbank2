@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/lib/hooks/use-toast";
 import { sleep } from "@trpc/server/unstable-core-do-not-import";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,8 +48,15 @@ export default function LoginPage() {
           description: "正在跳转...",
         });
 
-        await sleep(1000);
+        // 登录成功后 创建会话
+        await signIn("credentials", {
+          phone: data.phone,
+          password: data.password,
+          redirect: false,
+        });
+
         router.push("/");
+        router.refresh();
       } else {
         toast({
           title: "登录失败",

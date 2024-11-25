@@ -15,6 +15,13 @@
       "when": 1732516669308,
       "tag": "0001_fast_kang",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732518414574,
+      "tag": "0002_next_terror",
+      "breakpoints": true
     }
   ]
 }
