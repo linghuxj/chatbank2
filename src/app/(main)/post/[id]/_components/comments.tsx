@@ -72,78 +72,80 @@ export const Comments = ({
     <div className="space-y-8">
       <h2 className="text-2xl font-semibold">留言</h2>
 
-      {session ? (
-        <div className="space-y-4">
-          {!showCommentInput ? (
-            <div className="flex gap-4">
-              <Button onClick={handleAgree} disabled={isPending}>
-                赞同
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleDisagree}
-                disabled={isPending}
-              >
-                不赞同
-              </Button>
-            </div>
-          ) : (
-            <>
-              <Textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="写下你的评论..."
-                disabled={isPending}
-              />
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleSubmit}
-                  disabled={isPending || !content.trim()}
-                >
-                  发表评论
+      {!session ? (
+        <p className="text-muted-foreground">请登录后查看和发表留言</p>
+      ) : (
+        <>
+          <div className="space-y-4">
+            {!showCommentInput ? (
+              <div className="flex gap-4">
+                <Button onClick={handleAgree} disabled={isPending}>
+                  赞同
                 </Button>
                 <Button
-                  variant="ghost"
-                  onClick={() => setShowCommentInput(false)}
+                  variant="outline"
+                  onClick={handleDisagree}
+                  disabled={isPending}
                 >
-                  取消
+                  不赞同
                 </Button>
               </div>
-            </>
-          )}
-        </div>
-      ) : (
-        <p className="text-muted-foreground">请登录后发表评论</p>
+            ) : (
+              <>
+                <Textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="写下你的意见..."
+                  disabled={isPending}
+                />
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isPending || !content.trim()}
+                  >
+                    发表留言
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowCommentInput(false)}
+                  >
+                    取消
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="space-y-6">
+            {comments.map((comment) => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                postId={postId}
+                userId={userId}
+              />
+            ))}
+
+            {/* 加载更多指示器 */}
+            <div ref={ref} className="py-4 text-center">
+              {isFetchingNextPage ? (
+                <span className="text-muted-foreground">加载更多留言...</span>
+              ) : hasNextPage ? (
+                <span className="text-muted-foreground">向下滚动加载更多</span>
+              ) : comments.length > 0 ? (
+                <span className="text-muted-foreground">已经到底啦</span>
+              ) : (
+                <span className="text-muted-foreground">暂无留言</span>
+              )}
+            </div>
+          </div>
+        </>
       )}
-
-      <div className="space-y-6">
-        {comments.map((comment) => (
-          <CommentItem
-            key={comment.id}
-            comment={comment}
-            postId={postId}
-            userId={userId}
-          />
-        ))}
-
-        {/* 加载更多指示器 */}
-        <div ref={ref} className="py-4 text-center">
-          {isFetchingNextPage ? (
-            <span className="text-muted-foreground">加载更多评论...</span>
-          ) : hasNextPage ? (
-            <span className="text-muted-foreground">向下滚动加载更多</span>
-          ) : comments.length > 0 ? (
-            <span className="text-muted-foreground">已经到底啦</span>
-          ) : (
-            <span className="text-muted-foreground">暂无评论</span>
-          )}
-        </div>
-      </div>
     </div>
   );
 };
 
-// 评论项组件
+// 留言项组件
 const CommentItem = ({
   comment,
   postId,
@@ -206,7 +208,7 @@ const CommentItem = ({
 
   const handleDelete = () => {
     if (!session || session.user.id !== comment.userId) return;
-    if (window.confirm("确定要删除这条评论吗？")) {
+    if (window.confirm("确定要删除这条留言吗？")) {
       deleteComment({ id: comment.id });
     }
   };
@@ -238,13 +240,27 @@ const CommentItem = ({
 
       {session && (
         <div className="space-y-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowReplyInput(!showReplyInput)}
-          >
-            回复
-          </Button>
+          <div className="flex items-center gap-8">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowReplyInput(!showReplyInput)}
+            >
+              回复
+            </Button>
+
+            {/* 回复列表切换按钮 */}
+            {totalReplies > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowReplies(!showReplies)}
+                className="flex items-center gap-2"
+              >
+                {showReplies ? "收起回复" : `查看回复 (${totalReplies})`}
+              </Button>
+            )}
+          </div>
 
           {showReplyInput && (
             <div className="space-y-2">
@@ -273,18 +289,6 @@ const CommentItem = ({
             </div>
           )}
         </div>
-      )}
-
-      {/* 回复列表切换按钮 */}
-      {totalReplies > 0 && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowReplies(!showReplies)}
-          className="flex items-center gap-2"
-        >
-          {showReplies ? "收起回复" : `查看回复 (${totalReplies})`}
-        </Button>
       )}
 
       {/* 回复列表 */}

@@ -153,13 +153,53 @@ export const commentRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { limit, cursor, postId } = input;
 
+      const post = await ctx.db.query.posts.findFirst({
+        where: (posts, { eq }) => eq(posts.id, input.postId),
+      });
+
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post not found",
+        });
+      }
+
+      // 如果用户未登录，则不能查看评论
+      if (!ctx.session?.user) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Not authorized to view comments",
+        });
+      }
+      const currentUser = ctx.session.user;
+
+      // 先获取所有管理员的ID
+      const adminUsers = await ctx.db.query.users.findMany({
+        where: (users, { eq }) => eq(users.role, "admin"),
+        columns: {
+          id: true,
+        },
+      });
+
+      const adminUserIds = adminUsers.map((user) => user.id);
+
       const commentList = await ctx.db.query.comments.findMany({
         limit: limit + 1,
-        where: (comments, { eq, and, gt }) => {
+        where: (comments, { eq, and, gt, or, inArray }) => {
           const conditions = [
             eq(comments.postId, postId),
             eq(comments.isDeleted, false),
           ];
+
+          // 普通用户只能看到自己的评论和管理员的评论
+          if (currentUser.role === "user") {
+            conditions.push(
+              or(
+                eq(comments.userId, currentUser.id),
+                inArray(comments.userId, adminUserIds),
+              )!,
+            );
+          }
 
           if (cursor) {
             conditions.push(gt(comments.id, cursor));

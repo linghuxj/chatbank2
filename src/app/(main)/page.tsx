@@ -85,7 +85,7 @@ export default function Home() {
                       locale: zhCN,
                     })}
                   </span>
-                  <Badge variant="outline">{post.commentCount} 评论</Badge>
+                  <Badge variant="outline">{post.commentCount} 留言</Badge>
                 </div>
               </div>
             </Link>
