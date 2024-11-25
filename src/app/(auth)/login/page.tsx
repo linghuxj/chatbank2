@@ -18,7 +18,6 @@ import { loginSchema, type LoginInput } from "@/lib/validations/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/lib/hooks/use-toast";
-import { sleep } from "@trpc/server/unstable-core-do-not-import";
 import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
@@ -74,13 +73,18 @@ export default function LoginPage() {
     }
   };
 
+  const handleWechatLogin = async () => {
+    toast({
+      title: "微信登录",
+      description: "正在完善中...请稍后",
+    });
+  };
+
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
+        <CardTitle className="text-2xl">登录</CardTitle>
+        <CardDescription>输入您的手机号和密码登录您的账号</CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -88,12 +92,12 @@ export default function LoginPage() {
           onSubmit={handleSubmit(handleCredentialsLogin)}
         >
           <div className="grid gap-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">手机号</Label>
             <Input
               id="phone"
               type="text"
               maxLength={11}
-              placeholder="Enter your phone"
+              placeholder="输入您的手机号"
               required
               {...register("phone")}
               className={errors.phone ? "border-red-500" : ""}
@@ -104,9 +108,9 @@ export default function LoginPage() {
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">密码</Label>
               <Link href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
+                忘记密码?
               </Link>
             </div>
             <Input
@@ -121,16 +125,20 @@ export default function LoginPage() {
             )}
           </div>
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Logging in..." : "Login"}
+            {isSubmitting ? "登录中..." : "登录"}
           </Button>
-          <Button variant="outline" className="w-full">
-            Login with Google
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={handleWechatLogin}
+          >
+            微信登录
           </Button>
         </form>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
+          没有账号?{" "}
           <Link href="/register" className="underline">
-            Sign up
+            注册
           </Link>
         </div>
       </CardContent>

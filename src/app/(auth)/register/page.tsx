@@ -88,19 +88,17 @@ const RegisterPage = () => {
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Register</CardTitle>
-        <CardDescription>
-          Enter your email below to register to your account
-        </CardDescription>
+        <CardTitle className="text-2xl">注册</CardTitle>
+        <CardDescription>输入您的信息注册您的账号</CardDescription>
       </CardHeader>
       <CardContent>
         <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">名字/昵称</Label>
             <Input
               id="name"
               type="text"
-              placeholder="Enter your name"
+              placeholder="输入您的名字/昵称"
               required
               {...register("name")}
               className={errors.name ? "border-red-500" : ""}
@@ -110,11 +108,11 @@ const RegisterPage = () => {
             )}
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">手机号</Label>
             <Input
               id="phone"
               type="text"
-              placeholder="Enter your phone"
+              placeholder="输入您的手机号"
               required
               {...register("phone")}
               className={errors.phone ? "border-red-500" : ""}
@@ -124,7 +122,7 @@ const RegisterPage = () => {
             )}
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">密码</Label>
             <Input
               id="password"
               type="password"
@@ -137,7 +135,7 @@ const RegisterPage = () => {
             )}
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">确认密码</Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -159,8 +157,8 @@ const RegisterPage = () => {
             }
           >
             {isSubmitting || registerMutation.isPending || login.isPending
-              ? "Registering..."
-              : "Register"}
+              ? "注册中..."
+              : "注册"}
           </Button>
         </form>
       </CardContent>
