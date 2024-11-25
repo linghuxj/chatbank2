@@ -1,7 +1,7 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import {
   type DefaultSession,
-  type NextAuthConfig,
+  type NextAuthOptions,
   getServerSession,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -104,6 +104,7 @@ export const authConfig = {
           return {
             id: user.id,
             phone: user.phone,
+            role: user.role,
             name: user.name,
             image: user.image,
           };
@@ -120,8 +121,8 @@ export const authConfig = {
   },
 
   pages: {
-    signIn: "/login",
-    error: "/login",
+    signIn: "/auth/login",
+    error: "/auth/error",
   },
 
   callbacks: {
@@ -166,6 +167,6 @@ export const authConfig = {
 
   secret: env.AUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
-} satisfies NextAuthConfig;
+} satisfies NextAuthOptions;
 
 export const getServerAuthSession = () => getServerSession(authConfig);

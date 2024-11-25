@@ -11,8 +11,9 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { auth } from "@/server/auth";
 import { db } from "@/server/db";
+import { getServerAuthSession } from "../auth/config";
+import { type NextRequest } from "next/server";
 
 /**
  * 1. CONTEXT
@@ -26,8 +27,8 @@ import { db } from "@/server/db";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await auth();
+export const createTRPCContext = async (opts: { req: NextRequest }) => {
+  const session = await getServerAuthSession();
 
   return {
     db,

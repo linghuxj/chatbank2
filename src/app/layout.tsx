@@ -3,7 +3,8 @@ import "@/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
-import { TRPCReactProvider } from "@/trpc/react";
+import { getServerAuthSession } from "@/server/auth/config";
+import { Providers } from "@/components/trpc-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -13,9 +14,12 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // 获取服务端 session
+  const session = await getServerAuthSession();
+
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
@@ -25,7 +29,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <Providers session={session}>{children}</Providers>
           <Toaster />
         </ThemeProvider>
       </body>

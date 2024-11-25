@@ -72,6 +72,8 @@ const RegisterPage = () => {
   });
 
   const onSubmit = async (data: RegisterInput) => {
+    console.log("data", data);
+    console.log("registerMutation", registerMutation);
     try {
       await registerMutation.mutateAsync({
         phone: data.phone,

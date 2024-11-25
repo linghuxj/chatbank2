@@ -17,6 +17,8 @@ export const loginRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      console.log("ctx", ctx);
+      console.log("input", input);
       // 检查手机号是否已存在
       const existingUser = await ctx.db.query.users.findFirst({
         where: (users, { eq }) => eq(users.phone, input.phone),
