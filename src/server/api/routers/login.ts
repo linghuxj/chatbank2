@@ -1,10 +1,10 @@
-import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { hash, compare } from "bcryptjs";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { users, accounts } from "@/server/db/schema";
 import { loginSchema } from "@/lib/validations/auth";
+import { z } from "zod";
 
 export const loginRouter = createTRPCRouter({
   // 账号密码注册
@@ -65,42 +65,62 @@ export const loginRouter = createTRPCRouter({
   verifyCredentials: publicProcedure
     .input(loginSchema)
     .mutation(async ({ ctx, input }) => {
-      const { phone, password } = input;
+      try {
+        const { phone, password } = input;
 
-      const user = await ctx.db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.phone, phone),
-      });
+        const user = await ctx.db.query.users.findFirst({
+          where: (users, { eq }) => eq(users.phone, phone),
+        });
 
-      if (!user) {
+        if (!user) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "用户不存在",
+          });
+        }
+
+        const account = await ctx.db.query.accounts.findFirst({
+          where: (accounts, { eq, and }) =>
+            and(
+              eq(accounts.userId, user.id),
+              eq(accounts.provider, "credentials"),
+            ),
+        });
+
+        if (!account?.access_token) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "账号不存在",
+          });
+        }
+
+        const isValid = await compare(password, account.access_token);
+        if (!isValid) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "密码错误",
+          });
+        }
+
+        // 返回简化的用户信息
+        return {
+          success: true,
+          user: {
+            id: user.id,
+            name: user.name,
+            phone: user.phone,
+            role: user.role,
+          },
+        };
+      } catch (error) {
+        // 确保所有错误都被正确处理
+        if (error instanceof TRPCError) {
+          throw error;
+        }
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "用户不存在",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "登录过程中发生错误",
         });
       }
-
-      const account = await ctx.db.query.accounts.findFirst({
-        where: (accounts, { eq, and }) =>
-          and(
-            eq(accounts.userId, user.id),
-            eq(accounts.provider, "credentials"),
-          ),
-      });
-
-      if (!account?.access_token) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "账号不存在",
-        });
-      }
-
-      const isValid = await compare(password, account.access_token);
-      if (!isValid) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "密码错误",
-        });
-      }
-
-      return { user };
     }),
 });
