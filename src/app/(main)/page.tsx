@@ -72,7 +72,6 @@ export default function Home() {
     return (
       <>
         <SubHeader title="列表" />
-        <div className="py-4 text-center text-muted-foreground">暂无内容</div>
       </>
     );
   }
@@ -82,31 +81,37 @@ export default function Home() {
       <SubHeader title="列表" />
       <div className="relative">
         <div className="space-y-6 px-4 py-8">
-          {posts.map((post) => (
-            <article
-              key={post.id}
-              className="rounded-lg border p-4 transition-colors hover:bg-muted/50"
-            >
-              <Link href={`/post/${post.id}`} className="block">
-                <h2 className="text-xl font-semibold">{post.title}</h2>
-                {post.summary && (
-                  <p className="mt-2 text-muted-foreground">{post.summary}</p>
-                )}
-                <div className="mt-4 flex items-center justify-between gap-4 text-sm text-muted-foreground">
-                  <span>{post.user.name}</span>
-                  <div className="flex items-center gap-4">
-                    <span>
-                      {formatDistanceToNow(new Date(post.createdAt), {
-                        addSuffix: true,
-                        locale: zhCN,
-                      })}
-                    </span>
-                    <Badge variant="outline">{post.commentCount} 留言</Badge>
+          {posts.length === 0 ? (
+            <div className="py-4 text-center text-muted-foreground">
+              暂无内容
+            </div>
+          ) : (
+            posts.map((post) => (
+              <article
+                key={post.id}
+                className="rounded-lg border p-4 transition-colors hover:bg-muted/50"
+              >
+                <Link href={`/post/${post.id}`} className="block">
+                  <h2 className="text-xl font-semibold">{post.title}</h2>
+                  {post.summary && (
+                    <p className="mt-2 text-muted-foreground">{post.summary}</p>
+                  )}
+                  <div className="mt-4 flex items-center justify-between gap-4 text-sm text-muted-foreground">
+                    <span>{post.user.name}</span>
+                    <div className="flex items-center gap-4">
+                      <span>
+                        {formatDistanceToNow(new Date(post.createdAt), {
+                          addSuffix: true,
+                          locale: zhCN,
+                        })}
+                      </span>
+                      <Badge variant="outline">{post.commentCount} 留言</Badge>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </article>
-          ))}
+                </Link>
+              </article>
+            ))
+          )}
 
           <div ref={ref} className="py-4 text-center">
             {isFetchingNextPage ? (
