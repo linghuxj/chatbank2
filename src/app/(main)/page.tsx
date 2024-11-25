@@ -49,18 +49,31 @@ export default function Home() {
   const posts = data?.pages.flatMap((page) => page.items) ?? [];
 
   if (status === "pending") {
-    return <div className="py-4 text-center">加载中...</div>;
+    return (
+      <>
+        <SubHeader title="列表" />
+        <div className="py-4 text-center">加载中...</div>
+      </>
+    );
   }
 
   if (isError) {
     return (
-      <div className="py-4 text-center text-red-500">加载失败，请刷新重试</div>
+      <>
+        <SubHeader title="列表" />
+        <div className="py-4 text-center text-red-500">
+          加载失败，请刷新重试
+        </div>
+      </>
     );
   }
 
   if (posts.length === 0) {
     return (
-      <div className="py-4 text-center text-muted-foreground">暂无内容</div>
+      <>
+        <SubHeader title="列表" />
+        <div className="py-4 text-center text-muted-foreground">暂无内容</div>
+      </>
     );
   }
 
