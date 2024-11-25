@@ -81,7 +81,7 @@ export default function LoginPage() {
   };
 
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card className="mx-8 w-full max-w-md">
       <CardHeader>
         <CardTitle className="text-2xl">登录</CardTitle>
         <CardDescription>输入您的手机号和密码登录您的账号</CardDescription>

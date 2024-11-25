@@ -86,7 +86,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card className="mx-8 w-full max-w-md">
       <CardHeader>
         <CardTitle className="text-2xl">注册</CardTitle>
         <CardDescription>输入您的信息注册您的账号</CardDescription>
