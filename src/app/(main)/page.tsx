@@ -52,7 +52,7 @@ export default function Home() {
     return (
       <>
         <SubHeader title="列表" />
-        <div className="py-4 text-center">加载中...</div>
+        <div className="py-8 text-center">加载中...</div>
       </>
     );
   }
@@ -61,17 +61,9 @@ export default function Home() {
     return (
       <>
         <SubHeader title="列表" />
-        <div className="py-4 text-center text-red-500">
+        <div className="py-8 text-center text-red-500">
           加载失败，请刷新重试
         </div>
-      </>
-    );
-  }
-
-  if (posts.length === 0) {
-    return (
-      <>
-        <SubHeader title="列表" />
       </>
     );
   }
@@ -81,10 +73,8 @@ export default function Home() {
       <SubHeader title="列表" />
       <div className="relative">
         <div className="space-y-6 px-4 py-8">
-          {posts.length === 0 ? (
-            <div className="py-4 text-center text-muted-foreground">
-              暂无内容
-            </div>
+          {!posts.length ? (
+            <div className="text-center text-muted-foreground">暂无内容</div>
           ) : (
             posts.map((post) => (
               <article
