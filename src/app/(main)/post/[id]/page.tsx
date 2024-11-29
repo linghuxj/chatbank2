@@ -4,6 +4,7 @@ import { zhCN } from "date-fns/locale";
 import { Comments } from "./_components/comments";
 import { api } from "@/trpc/server";
 import { SubHeader } from "@/components/header/sub-header";
+import { Markdown } from "@lobehub/ui";
 
 export default async function PostDetailPage({
   params: { id },
@@ -28,7 +29,9 @@ export default async function PostDetailPage({
               {format(new Date(post.createdAt), "PPP", { locale: zhCN })}
             </time>
           </div>
-          <div className="mt-8">{post.content}</div>
+          <Markdown variant="normal" className="mt-8">
+            {post.content}
+          </Markdown>
         </article>
 
         <div className="mx-auto mt-16 max-w-4xl">
