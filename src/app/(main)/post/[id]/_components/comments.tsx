@@ -10,6 +10,7 @@ import { zhCN } from "date-fns/locale";
 import { useSession } from "next-auth/react";
 import { VenetianMask } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const Comments = ({
   postId,
@@ -217,7 +218,13 @@ const CommentItem = ({
     <div className="space-y-2 rounded-lg bg-muted/30 p-4">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="font-medium">{comment.user.name}</span>
+          <div className="flex items-center gap-2">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={comment.user.image ?? ""} />
+              <AvatarFallback>{comment.user.name?.[0] ?? "U"}</AvatarFallback>
+            </Avatar>
+            <span className="font-medium">{comment.user.name}</span>
+          </div>
           {session?.user.id === comment.userId && (
             <VenetianMask className="h-4 w-4 text-blue-800" />
           )}
@@ -377,7 +384,13 @@ const ReplyItem = ({
     <div className="space-y-1">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="font-medium">{reply.user.name}</span>
+          <div className="flex items-center gap-2">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={reply.user.image ?? ""} />
+              <AvatarFallback>{reply.user.name?.[0] ?? "U"}</AvatarFallback>
+            </Avatar>
+            <span className="font-medium">{reply.user.name}</span>
+          </div>
           {session?.user.id === reply.userId && (
             <VenetianMask className="h-4 w-4 text-blue-800" />
           )}

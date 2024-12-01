@@ -21,12 +21,17 @@ export const postRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { limit, cursor, userId } = input;
+      const isAdmin = ctx.session?.user?.role === "admin";
 
       try {
         const items = await ctx.db.query.posts.findMany({
           limit: limit + 1,
           where: (posts, { eq, and, gt }) => {
             const conditions = [eq(posts.isDeleted, false)];
+
+            if (!isAdmin) {
+              conditions.push(eq(posts.status, "published"));
+            }
 
             if (cursor) {
               conditions.push(gt(posts.id, cursor));
@@ -137,6 +142,42 @@ export const postRouter = createTRPCRouter({
           updatedAt: new Date(),
         })
         .where(eq(posts.id, input.id));
+    }),
+
+  // 添加更新状态的 mutation
+  updateStatus: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        status: z.enum(["published", "draft", "deleted"]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // 检查用户是否是管理员
+      if (ctx.session.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only admin can update post status",
+        });
+      }
+
+      const [post] = await ctx.db
+        .update(posts)
+        .set({
+          status: input.status,
+          updatedAt: new Date(),
+        })
+        .where(eq(posts.id, input.id))
+        .returning();
+
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post not found",
+        });
+      }
+
+      return post;
     }),
 });
 
