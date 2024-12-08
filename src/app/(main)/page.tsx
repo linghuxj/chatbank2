@@ -15,7 +15,7 @@ export default function Home() {
 
   return (
     <>
-      <SubHeader title="关于提升贵司收入和利润的建议" />
+      <SubHeader title="提升公司利润和竞争力的建议" />
       <div className="mx-auto flex w-full max-w-xl flex-col gap-6 p-8 md:max-w-3xl">
         <div className="flex flex-col gap-2">
           <div className="flex w-full items-center justify-between px-6">
@@ -36,7 +36,7 @@ export default function Home() {
             <FileText className="h-4 w-4" />
           </div>
           <span className="text-center text-lg">
-            贵司利润的上涨幅度显著低于收入涨幅
+            公司利润的上涨幅度显著低于收入涨幅
           </span>
 
           <div
