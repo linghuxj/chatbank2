@@ -20,7 +20,9 @@ export default async function PostDetailPage({
       <SubHeader title={post.title} />
       <div className="container px-4 py-8">
         <article className="prose mx-auto max-w-xl md:max-w-4xl">
-          <Markdown variant="normal">{post.content}</Markdown>
+          <Markdown variant="normal" allowHtml>
+            {post.content}
+          </Markdown>
         </article>
 
         <div className="mx-auto mt-8 max-w-4xl">
