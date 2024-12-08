@@ -1,184 +1,100 @@
 "use client";
 
-import { api } from "@/trpc/react";
-import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
-import { formatDistanceToNow } from "date-fns";
-import { zhCN } from "date-fns/locale";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-
-import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { SubHeader } from "@/components/header/sub-header";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ChevronRight, FileText } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+const pdfUrl =
+  "https://smtro.oss-cn-shenzhen.aliyuncs.com/common/%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%89%8D%E6%B5%B7%E6%99%BA%E4%BB%95%E6%97%B6%E4%BB%A3%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8-%E7%A8%8E%E5%8A%A1%E7%BB%BC%E5%90%88%E6%8A%A5%E5%91%8A.pdf";
 
 export default function Home() {
-  const { data: session } = useSession();
-  const isAdmin = session?.user?.role === "admin";
-
-  const { ref, inView } = useInView({
-    threshold: 0,
-    rootMargin: "300px 0px",
-  });
-
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    status,
-    isError,
-  } = api.post.getList.useInfiniteQuery(
-    {
-      limit: 10,
-    },
-    {
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-      initialCursor: undefined,
-      refetchOnWindowFocus: false,
-    },
-  );
-
-  const utils = api.useUtils();
-  const updatePostStatus = api.post.updateStatus.useMutation({
-    onSuccess: () => {
-      void utils.post.getList.invalidate();
-    },
-  });
-
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      void fetchNextPage();
-    }
-  }, [inView, fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  const posts = data?.pages.flatMap((page) => page.items) ?? [];
-
-  if (status === "pending") {
-    return (
-      <>
-        <SubHeader title="列表" />
-        <div className="py-8 text-center">加载中...</div>
-      </>
-    );
-  }
-
-  if (isError) {
-    return (
-      <>
-        <SubHeader title="列表" />
-        <div className="py-8 text-center text-red-500">
-          加载失败，请刷新重试
-        </div>
-      </>
-    );
-  }
+  const router = useRouter();
 
   return (
     <>
-      <SubHeader title="列表" />
-      <div className="relative">
-        <div className="space-y-6 px-4 py-8">
-          {!posts.length ? (
-            <div className="text-center text-muted-foreground">暂无内容</div>
-          ) : (
-            posts.map((post) => (
-              <article
-                key={post.id}
-                className="rounded-lg border p-4 transition-colors hover:bg-muted/50"
-              >
-                <div className="flex items-center justify-between">
-                  <Link href={`/post/${post.id}`} className="block flex-1">
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-xl font-semibold">{post.title}</h2>
-                      {isAdmin && post.status === "draft" && (
-                        <Badge variant="outline">已下架</Badge>
-                      )}
-                    </div>
-                  </Link>
-                  {isAdmin && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">打开菜单</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => {
-                            updatePostStatus.mutate({
-                              id: post.id,
-                              status:
-                                post.status === "published"
-                                  ? "draft"
-                                  : "published",
-                            });
-                          }}
-                        >
-                          {post.status === "published" ? "下架" : "上架"}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )}
-                </div>
-                {post.summary && (
-                  <p className="mt-2 text-muted-foreground">{post.summary}</p>
-                )}
-                <div className="mt-4 flex items-center justify-between gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage src={post.user.image ?? ""} />
-                      <AvatarFallback>
-                        {post.user.name?.[0] ?? "U"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span>{post.user.name}</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span>
-                      {formatDistanceToNow(new Date(post.createdAt), {
-                        addSuffix: true,
-                        locale: zhCN,
-                      })}
-                    </span>
-                    <Badge variant="outline">{post.commentCount} 留言</Badge>
-                  </div>
-                </div>
-              </article>
-            ))
-          )}
+      <SubHeader title="关于提升贵司收入和利润的建议" />
+      <div className="mx-auto flex w-full max-w-xl flex-col gap-6 p-8 md:max-w-3xl">
+        <div className="flex flex-col gap-2">
+          <div
+            className="flex w-full items-center justify-center gap-1"
+            onClick={() => router.push(`/post/pdf?url=${pdfUrl}`)}
+          >
+            <span className="text-muted-foreground">根据财税诊断</span>
+            <FileText className="h-4 w-4" />
+          </div>
+          <span className="text-center text-lg">
+            贵司利润的上涨幅度显著低于收入涨幅
+          </span>
 
-          <div ref={ref} className="py-4 text-center">
-            {isFetchingNextPage ? (
-              <span className="text-muted-foreground">加载更多...</span>
-            ) : hasNextPage ? (
-              <span className="text-muted-foreground">向下滚动加载更多</span>
-            ) : posts.length > 0 ? (
-              <span className="text-muted-foreground">已经到底啦</span>
-            ) : null}
+          <div
+            className="flex items-center justify-end gap-2"
+            onClick={() =>
+              router.push("/post/1129ee8a-774c-435f-ae7b-bf6b0440d5cf")
+            }
+          >
+            <span className="text-blue-500">留言</span>
+            <ChevronRight className="h-4 w-4 text-blue-500" />
           </div>
         </div>
 
-        {isAdmin && (
-          <Link
-            href="/post/new"
-            className="fixed bottom-16 right-8 rounded-full shadow-lg"
+        <div className="flex flex-col gap-2">
+          <span className="text-muted-foreground">增长的机会在</span>
+          <span className="text-lg">
+            当前企业（客户）普遍会遇到增长乏力、利润下降的问题但无法有效解决；
+          </span>
+          <span className="text-lg">
+            贵司可将现有的财税诊断功能逐步升级，用AI-CFO向客户提供持续的管理咨询服务，引导企业客户找到新的增长空间。
+          </span>
+
+          <div
+            className="flex items-center justify-end gap-2"
+            onClick={() =>
+              router.push("/post/d8b3a9b2-e589-4270-9411-29b0e2049344")
+            }
           >
-            <Button size="icon" className="h-14 w-14 rounded-full">
-              <Plus className="h-6 w-6" />
-            </Button>
-          </Link>
-        )}
+            <span className="text-blue-500">留言</span>
+            <ChevronRight className="h-4 w-4 text-blue-500" />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-muted-foreground">行动建议</span>
+          <span className="text-lg">快速验证该项新业务是否成立：</span>
+          <span className="text-lg">
+            提供3-5家企业的财税诊断报告（去掉敏感信息）；
+          </span>
+          <span className="text-lg">
+            我们分析完后，会以AI-CFO的名义向给每个企业提出针对性的建议（类似此页面）；
+          </span>
+          <span className="text-lg">
+            将该页面转发客户，获得客户的反馈，并开启持续的互动。
+          </span>
+
+          <div
+            className="flex items-center justify-end gap-2"
+            onClick={() =>
+              router.push("/post/d8b3a9b2-e589-4270-9411-29b0e2049345")
+            }
+          >
+            <span className="text-blue-500">留言</span>
+            <ChevronRight className="h-4 w-4 text-blue-500" />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-muted-foreground">中长期发展预测和应对</span>
+          <span className="text-lg">假设客户认可新业务的价值 ...</span>
+
+          <div
+            className="flex items-center justify-end gap-2"
+            onClick={() =>
+              router.push("/post/d8b3a9b2-e589-4270-9411-29b0e2049341")
+            }
+          >
+            <span className="text-blue-500">留言</span>
+            <ChevronRight className="h-4 w-4 text-blue-500" />
+          </div>
+        </div>
       </div>
     </>
   );
