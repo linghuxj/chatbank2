@@ -9,8 +9,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "Chat Bank",
-  description: "Chatbank2",
+  title: "AI-CFO",
+  description: "AI-CFO 财税分析，提升企业竞争力",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
