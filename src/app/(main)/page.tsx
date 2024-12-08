@@ -59,7 +59,7 @@ export default function Home() {
           <div
             className="flex items-center justify-end gap-2"
             onClick={() =>
-              router.push("/post/d8b3a9b2-e589-4270-9411-29b0e2049344")
+              router.push("/post/d8b3a9b2-e589-4270-9411-29b0e2049341")
             }
           >
             <span className="text-blue-500">留言</span>
