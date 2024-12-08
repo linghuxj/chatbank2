@@ -69,7 +69,9 @@ export default function Home() {
 
         <div className="flex flex-col gap-2">
           <span className="text-lg font-bold">解决方案</span>
-          <span>将现有的财税诊断功能逐步升级到AI-CFO，实现增量业务：</span>
+          <span>
+            针对有客户，在现有的财税诊断业务上，增加AI-CFO服务，实现增量业务：
+          </span>
           <span>1 与客户建立更好的联系，发掘更多需求；</span>
           <span>2 提供持续的管理咨询服务，引导企业客户找到新的增长空间；</span>
           <span>3 逐渐在财税服务领域，形成公司的独特价值和竞争力</span>
