@@ -22,7 +22,7 @@ export const Comments = ({
   const { data: session } = useSession();
   const utils = api.useUtils();
   const [content, setContent] = useState("");
-  const [showCommentInput, setShowCommentInput] = useState(false);
+  const [showCommentInput, setShowCommentInput] = useState(true);
   const { ref, inView } = useInView({
     threshold: 0,
     rootMargin: "300px 0px",
@@ -108,7 +108,7 @@ export const Comments = ({
                   </Button>
                   <Button
                     variant="ghost"
-                    onClick={() => setShowCommentInput(false)}
+                    onClick={() => setShowCommentInput(true)}
                   >
                     取消
                   </Button>
@@ -284,13 +284,6 @@ const CommentItem = ({
                   disabled={isReplyPending || !replyContent.trim()}
                 >
                   发表回复
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowReplyInput(false)}
-                >
-                  取消
                 </Button>
               </div>
             </div>
