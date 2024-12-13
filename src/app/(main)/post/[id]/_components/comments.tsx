@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
@@ -11,18 +10,16 @@ import { useSession } from "next-auth/react";
 import { VenetianMask } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useReplyContext } from "./reply-context";
 
 export const Comments = ({
   postId,
-  userId, // 作者
+  userId,
 }: {
   postId: string;
   userId: string;
 }) => {
   const { data: session } = useSession();
-  const utils = api.useUtils();
-  const [content, setContent] = useState("");
-  const [showCommentInput, setShowCommentInput] = useState(true);
   const { ref, inView } = useInView({
     threshold: 0,
     rootMargin: "300px 0px",
@@ -40,107 +37,64 @@ export const Comments = ({
       },
     );
 
+  const [replyTo, setReplyTo] = useState<{
+    commentId: string;
+    userName: string;
+  } | null>(null);
+
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       void fetchNextPage();
     }
   }, [inView, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  const { mutate: createComment, isPending } = api.comment.create.useMutation({
-    onSuccess: () => {
-      setContent("");
-      void utils.comment.getList.invalidate({ postId });
-    },
-  });
-
-  const handleAgree = () => {
-    if (!session) return;
-    createComment({ postId, content: "赞同", attitude: true });
-  };
-
-  const handleDisagree = () => {
-    setShowCommentInput(true);
-  };
-
-  const handleSubmit = () => {
-    if (!session || !content.trim()) return;
-    createComment({ postId, content: content.trim(), attitude: false });
-  };
-
   const comments = data?.pages.flatMap((page) => page.items) ?? [];
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-semibold">留言</h2>
+      <h2 className="text-2xl font-semibold">
+        留言
+        {replyTo && (
+          <span className="ml-2 text-base font-normal text-muted-foreground">
+            回复 {replyTo.userName}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-2"
+              onClick={() => setReplyTo(null)}
+            >
+              取消回复
+            </Button>
+          </span>
+        )}
+      </h2>
 
       {!session ? (
-        <p className="text-muted-foreground">请登录后查看和发表留言</p>
+        <p className="text-muted-foreground">请登录后查看留言</p>
       ) : (
-        <>
-          <div className="space-y-4">
-            {!showCommentInput ? (
-              <div className="flex gap-4">
-                <Button onClick={handleAgree} disabled={isPending}>
-                  赞同
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleDisagree}
-                  disabled={isPending}
-                >
-                  不赞同
-                </Button>
-              </div>
+        <div className="space-y-6">
+          {comments.map((comment) => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              postId={postId}
+              userId={userId}
+            />
+          ))}
+
+          {/* 加载更多指示器 */}
+          <div ref={ref} className="py-4 text-center">
+            {isFetchingNextPage ? (
+              <span className="text-muted-foreground">加载更多留言...</span>
+            ) : hasNextPage ? (
+              <span className="text-muted-foreground">向下滚动加载更多</span>
+            ) : comments.length > 0 ? (
+              <span className="text-muted-foreground">已经到底啦</span>
             ) : (
-              <>
-                <Textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="写下你的意见..."
-                  disabled={isPending}
-                />
-                <div className="flex gap-2">
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={isPending || !content.trim()}
-                  >
-                    发表留言
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setShowCommentInput(true)}
-                  >
-                    取消
-                  </Button>
-                </div>
-              </>
+              <span className="text-muted-foreground">暂无留言</span>
             )}
           </div>
-
-          <div className="space-y-6">
-            {comments.map((comment) => (
-              <CommentItem
-                key={comment.id}
-                comment={comment}
-                postId={postId}
-                userId={userId}
-              />
-            ))}
-
-            {/* 加载更多指示器 */}
-            <div ref={ref} className="py-4 text-center">
-              {isFetchingNextPage ? (
-                <span className="text-muted-foreground">加载更多留言...</span>
-              ) : hasNextPage ? (
-                <span className="text-muted-foreground">向下滚动加载更多</span>
-              ) : comments.length > 0 ? (
-                <span className="text-muted-foreground">已经到底啦</span>
-              ) : (
-                <span className="text-muted-foreground">暂无留言</span>
-              )}
-            </div>
-          </div>
-        </>
+        </div>
       )}
     </div>
   );
@@ -158,10 +112,9 @@ const CommentItem = ({
 }) => {
   const { data: session } = useSession();
   const utils = api.useUtils();
-  const [showReplyInput, setShowReplyInput] = useState(false);
-  const [replyContent, setReplyContent] = useState("");
   const [showReplies, setShowReplies] = useState(false);
   const [page, setPage] = useState(1);
+  const { setReplyTo } = useReplyContext();
 
   const {
     data: repliesData,
@@ -184,28 +137,11 @@ const CommentItem = ({
   const replies = repliesData?.pages.flatMap((page) => page.items) ?? [];
   const totalReplies = comment.replyCount || 0; // 需要后端提供总回复数
 
-  const { mutate: createReply, isPending: isReplyPending } =
-    api.reply.create.useMutation({
-      onSuccess: () => {
-        setReplyContent("");
-        setShowReplyInput(false);
-        void utils.comment.getList.invalidate({ postId });
-      },
-    });
-
   const { mutate: deleteComment } = api.comment.delete.useMutation({
     onSuccess: () => {
       void utils.comment.getList.invalidate({ postId });
     },
   });
-
-  const handleReply = (commentId: string) => {
-    if (!session || !replyContent.trim()) return;
-    createReply({
-      commentId,
-      content: replyContent.trim(),
-    });
-  };
 
   const handleDelete = () => {
     if (!session || session.user.id !== comment.userId) return;
@@ -251,7 +187,12 @@ const CommentItem = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setShowReplyInput(!showReplyInput)}
+              onClick={() =>
+                setReplyTo({
+                  commentId: comment.id,
+                  userName: comment.user.name,
+                })
+              }
             >
               回复
             </Button>
@@ -268,26 +209,6 @@ const CommentItem = ({
               </Button>
             )}
           </div>
-
-          {showReplyInput && (
-            <div className="space-y-2">
-              <Textarea
-                value={replyContent}
-                onChange={(e) => setReplyContent(e.target.value)}
-                placeholder="写下你的回复..."
-                disabled={isReplyPending}
-              />
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  onClick={() => handleReply(comment.id)}
-                  disabled={isReplyPending || !replyContent.trim()}
-                >
-                  发表回复
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       )}
 

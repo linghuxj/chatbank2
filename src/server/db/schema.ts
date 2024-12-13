@@ -127,6 +127,7 @@ export const posts = createTable("post", {
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content").notNull(), // Markdown 内容
   summary: varchar("summary", { length: 500 }), // 文章摘要
+  remarks: text("remarks"), // 备注
   commentCount: integer("comment_count").notNull().default(0), // 评论数
   status: varchar("status", { length: 31 }).notNull().default("published"), // published, draft, deleted
   createdAt: timestamp("created_at", { withTimezone: true })

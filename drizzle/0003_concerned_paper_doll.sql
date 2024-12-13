@@ -1,0 +1,1 @@
+ALTER TABLE "chatbank2_post" ADD COLUMN "remarks" text;
