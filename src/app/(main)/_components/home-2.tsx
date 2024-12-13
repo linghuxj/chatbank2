@@ -8,16 +8,11 @@ interface Home2Props {
 export default function Home2({ onNext }: Home2Props) {
   return (
     <div className="flex h-full min-w-full flex-col p-8">
-      {/* Header section */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">提升利润和竞争力的行动建议</h1>
-      </div>
-
       {/* Content section */}
       <div className="flex-1 space-y-8">
         <div>
-          <h2 className="mb-4 text-lg text-muted-foreground">解决方案</h2>
-          <h3 className="mb-4 text-xl font-bold">
+          <h2 className="mb-4 font-semibold">解决方案</h2>
+          <h3 className="mb-4 text-2xl font-bold">
             用AI-CFO(数智财税官)，构建全新的增值业务
           </h3>
           <p className="text-muted-foreground">

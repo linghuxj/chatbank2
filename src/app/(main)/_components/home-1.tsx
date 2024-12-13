@@ -10,22 +10,24 @@ export default function Home1({ onNext }: Home1Props) {
     <div className="flex h-full min-w-full flex-col p-8">
       {/* Header section */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold">提升利润和竞争力的行动建议</h1>
-        <div className="text-muted-foreground">@财智领航公司</div>
+        <h1 className="text-xl font-bold">提升利润和竞争力的行动建议</h1>
       </div>
 
       {/* Content section */}
       <div className="flex-1 space-y-8">
         {/* Quote section */}
-        <div className="rounded-lg bg-muted/50 p-4">
-          <p className="text-muted-foreground">
-            &quot;我将成为贵司专属的AI-CFO。在正式上岗前，希望通过解决贵司一个真实的业务问题，以获得贵司的认可。&quot;
-          </p>
+        <div className="flex flex-col">
+          <div className="text-muted-foreground">@财智领航公司</div>
+          <div className="rounded-lg bg-muted/50 p-4">
+            <p className="text-muted-foreground">
+              &quot;我将成为贵司专属的AI-CFO。在正式上岗前，希望通过解决贵司一个真实的业务问题，以获得贵司的认可。&quot;
+            </p>
+          </div>
         </div>
 
         {/* Main content */}
         <div className="space-y-6">
-          <h2 className="text-xl font-bold">
+          <h2 className="text-2xl font-bold">
             提升财税诊断业务的利润，并构建公司持续的竞争力
           </h2>
 

@@ -9,8 +9,8 @@ export default function Home4() {
   return (
     <div className="flex h-full min-w-full flex-col overflow-y-auto px-8 pb-14 pt-8">
       {/* Header section */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">关于提升利润和竞争力的话题</h1>
+      <div className="mb-6">
+        <h1 className="font-semibold">案例讨论</h1>
       </div>
 
       {/* Content section */}

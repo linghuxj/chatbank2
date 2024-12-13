@@ -9,11 +9,6 @@ interface Home3Props {
 export default function Home3({ onNext }: Home3Props) {
   return (
     <div className="flex h-full min-w-full flex-col p-8">
-      {/* Header section */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">提升利润和竞争力的行动建议</h1>
-      </div>
-
       {/* Content section */}
       <div className="flex-1 space-y-8">
         <div>
@@ -61,10 +56,14 @@ export default function Home3({ onNext }: Home3Props) {
 
       {/* Footer section */}
       <div className="mb-6 mt-auto space-y-4">
-        <p className="text-sm text-muted-foreground">@财智领航公司</p>
-        <p className="text-sm text-muted-foreground">
-          以上是&quot;我&quot;面试&quot;的第一步工作结果，希望获得贵司的评价。
-        </p>
+        <div className="flex flex-col">
+          <p className="text-muted-foreground">@财智领航公司</p>
+          <div className="rounded-lg bg-muted/50 p-4">
+            <p className="text-muted-foreground">
+              以上是&quot;我&quot;面试&quot;的第一步工作结果，希望获得贵司的评价。
+            </p>
+          </div>
+        </div>
         <Button
           variant="outline"
           className="mt-auto w-full"
