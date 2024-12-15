@@ -1,25 +1,92 @@
-import { MessageCircle, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import {
+  MessageCircle,
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 interface Home3Props {
   onNext: () => void;
 }
 
 export default function Home3({ onNext }: Home3Props) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
     <div className="flex h-full min-w-full flex-col p-8">
       {/* Content section */}
       <div className="flex-1 space-y-8">
         <div>
-          <h2 className="mb-8 text-center text-2xl font-bold">立即行动</h2>
+          <h2 className="text-2xl font-bold">基于财税诊断业务的发展建议</h2>
+          <span className="mb-8 text-muted-foreground">@财智领航公司</span>
 
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <h3 className="font-bold">快速验证新业务的设想是否成立:</h3>
+          <Separator className="my-8" />
+
+          <div className={`${!isExpanded ? "space-y-32" : "space-y-12"}`}>
+            <div className="flex flex-col space-y-2">
+              <p className="text-center text-lg text-muted-foreground">
+                财税数据显示
+              </p>
+              <div
+                className={`relative ${
+                  isExpanded ? "h-auto" : "h-6 overflow-hidden"
+                } transition-all duration-200`}
+              >
+                <div className="space-y-2">
+                  财税诊断业务2024年新增客户2000+，财税诊断实现收入XX万；目标客户转化率为X%，综合利润不足10%。
+                  <br />
+                  AI-CFO认为，影响利润的根本原因：
+                  <br />
+                  1 推广成本过高（渠道费、业务费、时间成本等等）；
+                  <br />
+                  2 高端客户转化比例不高；
+                  <br />3 产品的复购率；
+                </div>
+              </div>
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="mt-2 flex items-center self-end text-blue-500 hover:text-blue-600"
+              >
+                {isExpanded ? (
+                  <>
+                    收起 <ChevronUp className="ml-1 h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    详情 <ChevronDown className="ml-1 h-4 w-4" />
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div className="flex flex-col space-y-2">
+              <p className="text-center text-lg text-muted-foreground">
+                建议方案
+              </p>
+              <h3 className="text-center font-bold">现有财税诊断业务+AI-CFO</h3>
+              <p className="text-muted-foreground">
+                解决当下企业客户普遍关心的利润和增长问题。
+              </p>
+              <div className="flex justify-end">
+                <div
+                  onClick={onNext}
+                  className="inline-flex items-center text-blue-500 hover:text-blue-600"
+                >
+                  详情
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-center font-bold">立即验证</h3>
               <div className="space-y-2">
                 <p className="text-muted-foreground">
-                  1. 邀请3-5家企业做一次线上座谈；
+                  1. 邀请5-6家企业，做一次线上体验；
                 </p>
                 <div className="flex justify-end">
                   <Link
@@ -32,38 +99,12 @@ export default function Home3({ onNext }: Home3Props) {
                 </div>
               </div>
             </div>
-
-            <div className="space-y-4">
-              <h3 className="font-bold">收获更多办法:</h3>
-              <div className="space-y-2">
-                <p className="text-muted-foreground">
-                  在去掉敏感信息之后，将问题开放给更多用户讨论。
-                </p>
-                <div className="flex justify-end">
-                  <div
-                    onClick={onNext}
-                    className="inline-flex items-center text-blue-500 hover:text-blue-600"
-                  >
-                    生成开放讨论页
-                    <ChevronRight className="ml-1 h-4 w-4" />
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
       {/* Footer section */}
       <div className="mb-6 mt-auto space-y-4">
-        <div className="flex flex-col">
-          <p className="text-muted-foreground">@财智领航公司</p>
-          <div className="rounded-lg bg-muted/50 p-4">
-            <p className="text-muted-foreground">
-              以上是&quot;我&quot;面试&quot;的第一步工作结果，希望获得贵司的评价。
-            </p>
-          </div>
-        </div>
         <Button
           variant="outline"
           className="mt-auto w-full"
@@ -73,6 +114,13 @@ export default function Home3({ onNext }: Home3Props) {
           <MessageCircle className="mr-2 h-4 w-4" />
           疑问、意见或补充
         </Button>
+        <div
+          className="flex items-center justify-center text-muted-foreground"
+          onClick={onNext}
+        >
+          收获更多办法
+          <ChevronRight className="ml-1 h-4 w-4" />
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Home1 from "./_components/home-1";
+// import Home1 from "./_components/home-1";
 import Home2 from "./_components/home-2";
 import Home3 from "./_components/home-3";
 import Home4 from "./_components/home-4";
@@ -26,7 +26,7 @@ export default function Home() {
     const diff = startX.current - endX;
 
     if (Math.abs(diff) > 50) {
-      if (diff > 0 && currentPage < 3) {
+      if (diff > 0 && currentPage < 2) {
         setCurrentPage(currentPage + 1);
       } else if (diff < 0 && currentPage > 0) {
         setCurrentPage(currentPage - 1);
@@ -35,7 +35,7 @@ export default function Home() {
   };
 
   const handleNextPage = () => {
-    if (currentPage < 3) {
+    if (currentPage < 2) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -61,13 +61,13 @@ export default function Home() {
         className="flex h-full transition-transform duration-300 ease-in-out"
       >
         {/* Page 1 */}
-        <Home1 onNext={handleNextPage} />
-
-        {/* Page 2 */}
-        <Home2 onNext={handleNextPage} />
+        {/* <Home1 onNext={handleNextPage} /> */}
 
         {/* Page 3 */}
         <Home3 onNext={handleNextPage} />
+
+        {/* Page 2 */}
+        <Home2 onNext={handleNextPage} />
 
         {/* Page 4 */}
         <Home4 />
@@ -75,7 +75,7 @@ export default function Home() {
 
       {/* Page indicators */}
       <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 transform gap-2">
-        {[0, 1, 2, 3].map((index) => (
+        {[0, 1, 2].map((index) => (
           <div
             key={index}
             className={`h-2 w-2 rounded-full ${

@@ -28,7 +28,7 @@ export function SubHeader({ title }: SubHeaderProps) {
           <ArrowLeft className="h-6 w-6" />
         </Button>
         <h1 className="text-xl font-semibold">{title}</h1>
-        {session?.user && (
+        {session?.user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="flex cursor-pointer items-center gap-2">
@@ -57,6 +57,10 @@ export function SubHeader({ title }: SubHeaderProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        ) : (
+          <div className="flex items-center gap-2">
+            <></>
+          </div>
         )}
       </div>
     </header>
