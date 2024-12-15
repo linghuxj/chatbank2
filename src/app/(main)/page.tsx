@@ -9,7 +9,7 @@ import Home4 from "./_components/home-4";
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("homeCurrentPage");
+      const saved = localStorage.getItem("homeCurrentPage1215");
       return saved ? parseInt(saved) : 0;
     }
     return 0;
@@ -47,7 +47,7 @@ export default function Home() {
   }, [currentPage]);
 
   useEffect(() => {
-    localStorage.setItem("homeCurrentPage", currentPage.toString());
+    localStorage.setItem("homeCurrentPage1215", currentPage.toString());
   }, [currentPage]);
 
   return (
