@@ -10,11 +10,12 @@ import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 
 interface Home3Props {
-  onNext: (currentPage?: number) => void;
+  onNext: () => void;
 }
 
 export default function Home3({ onNext }: Home3Props) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded2, setIsExpanded2] = useState(false);
 
   return (
     <div className="flex h-full min-w-full flex-col overflow-y-auto p-8">
@@ -64,36 +65,82 @@ export default function Home3({ onNext }: Home3Props) {
               <p className="text-center text-lg text-muted-foreground">
                 建议方案
               </p>
-              <h3 className="text-center font-bold">现有财税诊断业务+AI-CFO</h3>
-              <p className="text-muted-foreground">
-                解决当下企业客户普遍关心的利润和增长问题。
-              </p>
-              <div className="flex justify-end">
-                <div
-                  onClick={() => onNext()}
-                  className="inline-flex items-center text-blue-500 hover:text-blue-600"
-                >
-                  详情
-                  <ChevronRight className="ml-1 h-4 w-4" />
+              <h3 className="font-bold">
+                为每一位财税诊断的企业客户提供其专属的AI-CFO(数智财务官)
+              </h3>
+              {!isExpanded2 ? (
+                <p className="text-muted-foreground">
+                  解决当下企业客户普遍关心的利润和增长问题。
+                </p>
+              ) : (
+                <div className="flex flex-col space-y-4">
+                  <div className="flex flex-col text-muted-foreground">
+                    <p>1. 解决当下企业客户普遍关心的利润和增长问题。</p>
+                    <p>
+                      2.
+                      从财税诊断报告开始，针对企业的问题，提供持续的行动建议(告诉企业如何做，能实现平稳创新和利润增长);
+                    </p>
+                  </div>
+                  <div className="flex flex-col text-muted-foreground">
+                    <span className="mb-2 font-bold text-primary">
+                      快速实现增量业务，使短期利润增加
+                    </span>
+                    <p>1 可快速验证(新业务是否可行);</p>
+                    <p>
+                      2
+                      基于贵司现有成熟的业务、客户(渠道)和专家团队，稳步实现增量业务;由我方提供
+                      AI-CFO; 根据确定的增长，再逐步引入新的合作者;
+                    </p>
+                    <p>3 与客户建立持续的联系，发掘更多需求。</p>
+                  </div>
+                  <div className="flex flex-col text-muted-foreground">
+                    <span className="mb-2 font-bold text-primary">
+                      构建持续的竞争力
+                    </span>
+                    <p>
+                      1
+                      用工具（方法）解决当前企业客户遇到的普遍问题，开启具有长远潜力的业务空间;
+                    </p>
+                    <p>
+                      2 在财税服务领域向客户提供独特的价值，构建持续的竞争力;
+                    </p>
+                  </div>
                 </div>
+              )}
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setIsExpanded2(!isExpanded2)}
+                  className="mt-2 flex items-center self-end text-blue-500 hover:text-blue-600"
+                >
+                  {isExpanded2 ? (
+                    <>
+                      收起 <ChevronUp className="ml-1 h-4 w-4" />
+                    </>
+                  ) : (
+                    <>
+                      详情 <ChevronDown className="ml-1 h-4 w-4" />
+                    </>
+                  )}
+                </button>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-center font-bold">立即验证</h3>
-              <div className="space-y-2">
-                <p className="text-muted-foreground">
-                  1. 邀请5-6家企业，做一次线上体验；
-                </p>
-                <div className="flex justify-end">
-                  <Link
-                    href="/share"
-                    className="inline-flex items-center text-blue-500 hover:text-blue-600"
-                  >
-                    生成邀请函
-                    <ChevronRight className="ml-1 h-4 w-4" />
-                  </Link>
-                </div>
+            <div className="flex flex-col space-y-2">
+              <p className="text-center text-lg text-muted-foreground">
+                立即验证
+              </p>
+              <h3 className="font-bold">快速验证新业务的设想是否成立:</h3>
+              <p className="text-muted-foreground">
+                1. 邀请5-6家企业，做一次线上体验；
+              </p>
+              <div className="flex justify-end">
+                <Link
+                  href="/share"
+                  className="inline-flex items-center text-blue-500 hover:text-blue-600"
+                >
+                  生成邀请函
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </Link>
               </div>
             </div>
           </div>
@@ -113,7 +160,7 @@ export default function Home3({ onNext }: Home3Props) {
         </Button>
         <div
           className="flex items-center justify-center text-muted-foreground"
-          onClick={() => onNext(2)}
+          onClick={() => onNext()}
         >
           收获更多办法
           <ChevronRight className="ml-1 h-4 w-4" />

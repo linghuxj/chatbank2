@@ -34,10 +34,8 @@ export default function Home() {
     }
   };
 
-  const handleNextPage = (page?: number) => {
-    if (page) {
-      setCurrentPage(page);
-    } else if (currentPage < 2) {
+  const handleNextPage = () => {
+    if (currentPage < 1) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -65,11 +63,11 @@ export default function Home() {
         {/* Page 1 */}
         {/* <Home1 onNext={handleNextPage} /> */}
 
+        {/* Page 2 */}
+        {/* <Home2 onNext={handleNextPage} /> */}
+
         {/* Page 3 */}
         <Home3 onNext={handleNextPage} />
-
-        {/* Page 2 */}
-        <Home2 onNext={handleNextPage} />
 
         {/* Page 4 */}
         <Home4 />
@@ -77,7 +75,7 @@ export default function Home() {
 
       {/* Page indicators */}
       <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 transform gap-2">
-        {[0, 1, 2].map((index) => (
+        {[0, 1].map((index) => (
           <div
             key={index}
             className={`h-2 w-2 rounded-full ${
