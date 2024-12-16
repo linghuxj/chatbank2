@@ -34,8 +34,10 @@ export default function Home() {
     }
   };
 
-  const handleNextPage = () => {
-    if (currentPage < 2) {
+  const handleNextPage = (page?: number) => {
+    if (page) {
+      setCurrentPage(page);
+    } else if (currentPage < 2) {
       setCurrentPage(currentPage + 1);
     }
   };

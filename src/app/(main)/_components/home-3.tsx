@@ -10,43 +10,40 @@ import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 
 interface Home3Props {
-  onNext: () => void;
+  onNext: (currentPage?: number) => void;
 }
 
 export default function Home3({ onNext }: Home3Props) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="flex h-full min-w-full flex-col p-8">
+    <div className="flex h-full min-w-full flex-col overflow-y-auto p-8">
       {/* Content section */}
-      <div className="flex-1 space-y-8">
+      <div className="flex-1 space-y-6">
         <div>
           <h2 className="text-2xl font-bold">基于财税诊断业务的发展建议</h2>
           <span className="mb-8 text-muted-foreground">@财智领航公司</span>
 
-          <Separator className="my-8" />
+          <Separator className="my-4" />
 
-          <div className={`${!isExpanded ? "space-y-32" : "space-y-12"}`}>
+          <div className="space-y-8">
             <div className="flex flex-col space-y-2">
               <p className="text-center text-lg text-muted-foreground">
                 财税数据显示
               </p>
-              <div
-                className={`relative ${
-                  isExpanded ? "h-auto" : "h-6 overflow-hidden"
-                } transition-all duration-200`}
-              >
-                <div className="space-y-2">
+              {!isExpanded ? (
+                <div>贵司的财税诊断业务，有较大的利润提升空间。</div>
+              ) : (
+                <div className="flex flex-col">
                   财税诊断业务2024年新增客户2000+，财税诊断实现收入XX万；目标客户转化率为X%，综合利润不足10%。
-                  <br />
-                  AI-CFO认为，影响利润的根本原因：
-                  <br />
-                  1 推广成本过高（渠道费、业务费、时间成本等等）；
-                  <br />
-                  2 高端客户转化比例不高；
-                  <br />3 产品的复购率；
+                  <span className="mt-2 font-semibold">
+                    AI-CFO认为，影响利润的根本原因：
+                  </span>
+                  <p>1 推广成本过高（渠道费、业务费、时间成本等等）；</p>
+                  <p>2 高端客户转化比例不高；</p>
+                  <p>3 产品的复购率；</p>
                 </div>
-              </div>
+              )}
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="mt-2 flex items-center self-end text-blue-500 hover:text-blue-600"
@@ -73,7 +70,7 @@ export default function Home3({ onNext }: Home3Props) {
               </p>
               <div className="flex justify-end">
                 <div
-                  onClick={onNext}
+                  onClick={() => onNext()}
                   className="inline-flex items-center text-blue-500 hover:text-blue-600"
                 >
                   详情
@@ -109,14 +106,14 @@ export default function Home3({ onNext }: Home3Props) {
           variant="outline"
           className="mt-auto w-full"
           size="lg"
-          onClick={onNext}
+          onClick={() => onNext()}
         >
           <MessageCircle className="mr-2 h-4 w-4" />
           疑问、意见或补充
         </Button>
         <div
           className="flex items-center justify-center text-muted-foreground"
-          onClick={onNext}
+          onClick={() => onNext(2)}
         >
           收获更多办法
           <ChevronRight className="ml-1 h-4 w-4" />

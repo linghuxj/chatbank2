@@ -11,9 +11,9 @@ export default function Home2({ onNext }: Home2Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isExpanded2, setIsExpanded2] = useState(false);
   return (
-    <div className="flex h-full min-w-full flex-col p-8">
+    <div className="flex h-full min-w-full flex-col overflow-y-auto p-8">
       {/* Content section */}
-      <div className="flex-1 space-y-8">
+      <div className="flex-1 space-y-6">
         <div>
           <h2 className="text-2xl font-semibold">用AI-CFO快速实现利润增加</h2>
           <span className="mb-8 text-muted-foreground">
@@ -21,15 +21,15 @@ export default function Home2({ onNext }: Home2Props) {
           </span>
         </div>
 
-        <Separator />
+        <Separator className="my-4" />
 
-        <div className="space-y-8">
+        <div className="space-y-6">
           <div className="flex flex-col space-y-2">
             <p className="text-center text-lg text-muted-foreground">
               为每一位财税诊断的企业客户提供
             </p>
             <h2 className="text-center text-xl font-semibold">
-              专属AI-CFO（数智财务官）
+              专属的AI-CFO（数智财务官）
             </h2>
             {isExpanded && (
               <div className="flex flex-col space-y-2">
@@ -56,7 +56,7 @@ export default function Home2({ onNext }: Home2Props) {
             </button>
           </div>
 
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col">
             <h3 className="mb-3 text-lg font-bold">短期利润增加</h3>
             <ol className="list-decimal space-y-2 pl-6 text-muted-foreground">
               <li>可快速验证（新业务是否可行）；</li>
@@ -83,7 +83,7 @@ export default function Home2({ onNext }: Home2Props) {
           </div>
         </div>
 
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col">
           <h3 className="mb-3 text-lg font-bold">构建持续的竞争力</h3>
           <ol className="list-decimal space-y-2 pl-6 text-muted-foreground">
             <li>并开启具有长远潜力的业务空间；</li>

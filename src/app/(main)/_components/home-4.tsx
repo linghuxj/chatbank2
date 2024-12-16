@@ -8,14 +8,14 @@ export default function Home4() {
   const [isExpanded2, setIsExpanded2] = useState(false);
 
   return (
-    <div className="flex h-full min-w-full flex-col overflow-y-auto px-8 pb-14 pt-8">
+    <div className="flex h-full min-w-full flex-col overflow-y-auto px-8 pb-24 pt-8">
       {/* Header section */}
-      <div className="mb-6">
+      <div className="mb-2">
         <h1 className="font-semibold">案例讨论</h1>
       </div>
 
       {/* Content section */}
-      <div className="flex-1 space-y-8">
+      <div className="flex-1 space-y-6">
         {/* Title section */}
         <div className="space-y-4">
           <h2 className="text-2xl font-bold">
@@ -25,7 +25,7 @@ export default function Home4() {
         </div>
 
         {/* Conflict description */}
-        <div className="space-y-6">
+        <div className="space-y-2">
           <h2 className="text-xl font-bold">冲突描述</h2>
 
           <div className="space-y-2">
@@ -71,7 +71,7 @@ export default function Home4() {
         </div>
 
         {/* Problems and challenges */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <h2 className="text-xl font-bold">问题与挑战</h2>
           <ol className="list-decimal space-y-2 pl-6 text-muted-foreground">
             <li>提升该项业务的利润；</li>
@@ -80,7 +80,7 @@ export default function Home4() {
         </div>
 
         {/* Current solution */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <h2 className="text-xl font-bold">当前方案</h2>
           <div className="space-y-2">
             <div
