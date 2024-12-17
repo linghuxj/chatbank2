@@ -14,7 +14,7 @@ export const CommentInput = ({
   commentHints,
 }: {
   postId: string;
-  commentHints: string[];
+  commentHints?: string[];
 }) => {
   const { data: session } = useSession();
   const utils = api.useUtils();
@@ -26,11 +26,11 @@ export const CommentInput = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentHintIndex((prev) => (prev + 1) % commentHints.length);
+      setCurrentHintIndex((prev) => (prev + 1) % (commentHints?.length ?? 0));
     }, VERTICAL_SCROLL_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [commentHints.length]);
+  }, [commentHints?.length]);
 
   const { mutate: createComment, isPending: isCommentPending } =
     api.comment.create.useMutation({
@@ -78,8 +78,8 @@ export const CommentInput = ({
     <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
       <div className="container mx-auto max-w-4xl">
         <div className="flex flex-col gap-2">
-          <div className="min-h-6 w-full">
-            {commentHints.map((hint, index) => (
+          <div className="w-full">
+            {commentHints?.map((hint, index) => (
               <div
                 key={index}
                 className={`text-sm text-muted-foreground transition-all duration-500 ${

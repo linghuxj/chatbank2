@@ -2,18 +2,12 @@
 
 import { useState, useRef, useEffect } from "react";
 // import Home1 from "./_components/home-1";
-import Home2 from "./_components/home-2";
+// import Home2 from "./_components/home-2";
 import Home3 from "./_components/home-3";
 import Home4 from "./_components/home-4";
 
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("homeCurrentPage1215");
-      return saved ? parseInt(saved) : 0;
-    }
-    return 0;
-  });
+  const [currentPage, setCurrentPage] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const startX = useRef(0);
 
@@ -44,10 +38,6 @@ export default function Home() {
     if (containerRef.current) {
       containerRef.current.style.transform = `translateX(-${currentPage * 100}%)`;
     }
-  }, [currentPage]);
-
-  useEffect(() => {
-    localStorage.setItem("homeCurrentPage1215", currentPage.toString());
   }, [currentPage]);
 
   return (
