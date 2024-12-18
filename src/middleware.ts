@@ -13,10 +13,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 修改：将 /login 路径添加到公开路径列表中，并修改判断逻辑
-  if (
-    pathname === "/" ||
-    publicPaths.some((path) => pathname.startsWith(path))
-  ) {
+  if (publicPaths.some((path) => pathname.startsWith(path))) {
     // 如果已登录用户访问登录页，重定向到首页
     if (token && pathname.startsWith("/login")) {
       return NextResponse.redirect(new URL("/", request.url));

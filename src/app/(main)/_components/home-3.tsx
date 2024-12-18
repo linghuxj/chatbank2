@@ -19,7 +19,7 @@ export default function Home3({ onNext }: Home3Props) {
       <ReplyContextProvider>
         {/* Content section */}
         <div className="flex-1 space-y-6">
-          <div className="p-8">
+          <div className="px-8 pb-4 pt-8">
             <h2 className="text-2xl font-bold">基于财税诊断业务的发展建议</h2>
             <span className="mb-8 text-muted-foreground">@财智领航公司</span>
 
@@ -125,7 +125,7 @@ export default function Home3({ onNext }: Home3Props) {
 
               <div className="flex flex-col space-y-2">
                 <p className="text-center text-lg text-muted-foreground">
-                  立即验证
+                  立即行动
                 </p>
                 <h3 className="font-bold">快速验证新业务的设想是否成立:</h3>
                 <p className="text-muted-foreground">
@@ -141,10 +141,18 @@ export default function Home3({ onNext }: Home3Props) {
                   </Link>
                 </div>
               </div>
+
+              <div
+                className="flex items-center justify-center gap-1 text-muted-foreground"
+                onClick={() => onNext()}
+              >
+                收获更多办法
+                <ChevronRight className="h-4 w-4" />
+              </div>
             </div>
           </div>
 
-          <div className="p-4">
+          <div className="px-4 pb-8">
             <Comments
               postId="id-page-one"
               userId="8d0eb890-33af-4add-8568-a4b1a7ffab21"
