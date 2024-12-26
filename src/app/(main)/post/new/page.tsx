@@ -29,15 +29,24 @@ export default function NewPostPage() {
   const mainId = searchParams.get("mainId");
   const type = searchParams.get("type");
   const postId = searchParams.get("postId");
+  const current = searchParams.get("current") ?? 0;
+  const [toNext, setToNext] = useState(false);
 
   const post = api.post.getById.useQuery(
     { id: postId ?? "" },
     { enabled: !!postId },
   );
+  const { data: nextPosts } = api.post.getNextPosts.useQuery(
+    { mainId: mainId ?? "" },
+    {
+      enabled: !!mainId && !!type && (type === "step" || type === "step-next"),
+    },
+  );
 
   const {
     register,
     handleSubmit,
+    reset,
     setValue,
     formState: { errors },
   } = useForm<FormData>({
@@ -52,6 +61,16 @@ export default function NewPostPage() {
     }
   }, [post.data, setValue]);
 
+  useEffect(() => {
+    if (type === "step-next" || type === "step") {
+      setToNext(true);
+      if (type === "step" && !postId) {
+        // 新增第一个的时候不能去下一步
+        setToNext(false);
+      }
+    }
+  }, [type, postId]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const queryClient = useQueryClient();
@@ -60,12 +79,19 @@ export default function NewPostPage() {
     onSuccess: () => {
       toast({
         title: "创建成功",
-        description: "内容已创建，可点击查看...",
+        description:
+          type === "step" || type === "step-next"
+            ? "内容已创建，可继续创建下一步确认内容"
+            : "内容已创建，返回可点击查看...",
       });
       void queryClient.invalidateQueries({
         queryKey: [["main", "getById"]],
       });
-      router.back();
+      if (type !== "step" && type !== "step-next") {
+        router.back();
+      } else {
+        setToNext(true);
+      }
     },
   });
 
@@ -73,12 +99,17 @@ export default function NewPostPage() {
     onSuccess: () => {
       toast({
         title: "修改成功",
-        description: "内容已修改，可点击查看...",
+        description:
+          type === "step" || type === "step-next"
+            ? "内容已修改，可继续创建下一步确认内容"
+            : "内容已修改，返回可点击查看...",
       });
       void queryClient.invalidateQueries({
         queryKey: [["main", "getById"]],
       });
-      router.back();
+      if (type !== "step" && type !== "step-next") {
+        router.back();
+      }
     },
   });
 
@@ -107,6 +138,20 @@ export default function NewPostPage() {
     }
   };
 
+  const handleNext = () => {
+    let nextPostId;
+    let currentNum = Number(current);
+    if (nextPosts && nextPosts.length > currentNum) {
+      nextPostId = nextPosts[currentNum]?.id;
+    }
+    currentNum++;
+    reset();
+    router.replace(
+      `/post/new?mainId=${mainId}&type=step-next&current=${currentNum}` +
+        (nextPostId ? `&postId=${nextPostId}` : ""),
+    );
+  };
+
   if (!mainId || !type) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-6 text-center text-xl">
@@ -122,7 +167,9 @@ export default function NewPostPage() {
       <div className="mx-auto w-full max-w-xl p-6 md:max-w-4xl">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title">标题</Label>
+            <Label htmlFor="title" className="text-lg">
+              标题
+            </Label>
             <Input id="title" {...register("title")} placeholder="请输入标题" />
             {errors.title && (
               <p className="text-sm text-destructive">{errors.title.message}</p>
@@ -130,7 +177,7 @@ export default function NewPostPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="summary">
+            <Label htmlFor="summary" className="text-lg">
               摘要 (可选，即主管页或者客观页显示内容)
             </Label>
             <Textarea
@@ -142,7 +189,9 @@ export default function NewPostPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content">内容</Label>
+            <Label htmlFor="content" className="text-lg">
+              内容
+            </Label>
             <Textarea
               id="content"
               {...register("content")}
@@ -156,16 +205,33 @@ export default function NewPostPage() {
             )}
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                提交中...
-              </>
-            ) : (
-              "发布"
+          <div className="flex gap-12">
+            <Button type="submit" disabled={isSubmitting} className="flex-1">
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  提交中...
+                </>
+              ) : !!postId ? (
+                "修改"
+              ) : (
+                "发布"
+              )}
+            </Button>
+            {(type === "step" || type === "step-next") && (
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => handleNext()}
+                disabled={!toNext || isSubmitting}
+              >
+                {nextPosts && nextPosts.length > Number(current)
+                  ? "修改下一个确认方案"
+                  : "新增确认方案"}
+              </Button>
             )}
-          </Button>
+          </div>
         </form>
       </div>
     </>

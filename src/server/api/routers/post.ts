@@ -6,7 +6,7 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { comments, posts, replies } from "@/server/db/schema";
-import { desc, eq, sql } from "drizzle-orm";
+import { asc, desc, eq, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const postRouter = createTRPCRouter({
@@ -251,7 +251,7 @@ export const postRouter = createTRPCRouter({
             eq(posts.isDeleted, false),
             eq(posts.type, "step-next"),
           ),
-        orderBy: [desc(posts.createdAt)],
+        orderBy: [asc(posts.createdAt)],
       });
     }),
 });
