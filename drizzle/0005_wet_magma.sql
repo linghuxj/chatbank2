@@ -1,0 +1,1 @@
+ALTER TABLE "chatbank2_post" ADD COLUMN "type" varchar(31) DEFAULT 'new' NOT NULL;

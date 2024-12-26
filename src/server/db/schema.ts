@@ -115,6 +115,33 @@ export const verificationTokens = createTable(
 );
 
 /***** 论坛相关表结构 *****/
+// 主题
+export const mains = createTable("main", {
+  id: varchar("id", { length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("user_id", { length: 255 })
+    .notNull()
+    .references(() => users.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  business: text("business"),
+  issue: text("issue"),
+  reason: text("reason"),
+  viewCount: integer("view_count").notNull().default(0), // 浏览次数
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+    () => new Date(),
+  ),
+});
+
+export const mainsRelations = relations(mains, ({ one, many }) => ({
+  user: one(users, { fields: [mains.userId], references: [users.id] }),
+  posts: many(posts),
+}));
+
 // 帖子表
 export const posts = createTable("post", {
   id: varchar("id", { length: 255 })
@@ -124,12 +151,18 @@ export const posts = createTable("post", {
   userId: varchar("user_id", { length: 255 })
     .notNull()
     .references(() => users.id),
+  mainId: varchar("main_id", { length: 255 })
+    .notNull()
+    .default("1")
+    .references(() => mains.id),
+  type: varchar("type", { length: 31 }).notNull().default("new"), // new 新增业务, income 增量收入, competitive 竞争力, step 关键步骤, data 数据显示, reason 原因, plan 方案
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content").notNull(), // Markdown 内容
   summary: varchar("summary", { length: 500 }), // 文章摘要
   remarks: text("remarks"), // 备注
   commentCount: integer("comment_count").notNull().default(0), // 评论数
   status: varchar("status", { length: 31 }).notNull().default("published"), // published, draft, deleted
+  isConfirmed: boolean("is_confirmed").notNull().default(false), // 是否确认
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -190,6 +223,7 @@ export const replies = createTable("reply", {
 export const postsRelations = relations(posts, ({ one, many }) => ({
   user: one(users, { fields: [posts.userId], references: [users.id] }),
   comments: many(comments),
+  main: one(mains, { fields: [posts.mainId], references: [mains.id] }),
 }));
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({

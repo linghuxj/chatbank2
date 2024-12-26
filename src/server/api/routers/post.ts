@@ -179,6 +179,41 @@ export const postRouter = createTRPCRouter({
 
       return post;
     }),
+
+  // 确认帖子
+  confirm: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // 判断是否是自己发的帖子
+      const post = await ctx.db.query.posts.findFirst({
+        where: (posts, { eq }) => eq(posts.id, input.id),
+      });
+      if (post?.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Not authorized",
+        });
+      }
+      return ctx.db
+        .update(posts)
+        .set({ isConfirmed: true })
+        .where(eq(posts.id, input.id));
+    }),
+
+  // 获取下一个帖子
+  getNextPosts: publicProcedure
+    .input(z.object({ mainId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.query.posts.findMany({
+        where: (posts, { eq, and }) =>
+          and(
+            eq(posts.mainId, input.mainId),
+            eq(posts.isDeleted, false),
+            eq(posts.type, "step-next"),
+          ),
+        orderBy: [desc(posts.createdAt)],
+      });
+    }),
 });
 
 export const commentRouter = createTRPCRouter({
