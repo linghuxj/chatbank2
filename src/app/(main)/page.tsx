@@ -1,7 +1,12 @@
+"use client";
+
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { api } from "@/trpc/react";
 
 export default function HomePage() {
+  const { data: mains } = api.main.getByUserId.useQuery();
+
   return (
     <div className="mx-auto flex w-full flex-col p-6">
       <main className="flex-1 space-y-12">
@@ -17,10 +22,10 @@ export default function HomePage() {
 
         <div className="flex flex-col items-center space-y-24 pt-32 text-center">
           <Link
-            href="/publish"
+            href={!mains ? `/publish` : `/main?id=${mains.id}`}
             className="flex items-center text-blue-600 transition-colors hover:text-blue-700"
           >
-            <span>现有业务改进</span>
+            <span>{!mains ? "现有业务改进" : "查看已有业务改进"}</span>
             <ChevronRight className="h-5 w-5" />
           </Link>
 

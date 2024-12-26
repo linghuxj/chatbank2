@@ -2,12 +2,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, ChevronRight, ChevronUp } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Home4Props {
   main: any;
 }
 
 export default function Home4({ main }: Home4Props) {
+  const router = useRouter();
+  const session = useSession();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isExpanded2, setIsExpanded2] = useState(false);
 
@@ -56,25 +60,57 @@ export default function Home4({ main }: Home4Props) {
               </button>
             </div>
 
-            {dataPost && (
-              <Link
-                href={`/post/${dataPost?.id}`}
-                className="flex items-center gap-1 pt-8 text-blue-500 hover:text-blue-600"
-              >
-                财报解读
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            )}
+            <div className="flex items-center justify-start gap-12 pt-8">
+              {dataPost && (
+                <Link
+                  href={`/post/${dataPost?.id}`}
+                  className="flex items-center gap-1 text-blue-500 hover:text-blue-600"
+                >
+                  财报解读
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              )}
+              {session.data?.user.role === "admin" && (
+                <button
+                  className="flex items-center text-blue-500 hover:text-blue-600"
+                  onClick={() =>
+                    router.push(
+                      `/post/new?mainId=${main?.id}&type=data` +
+                        (!dataPost ? "" : `&postId=${dataPost?.id}`),
+                    )
+                  }
+                >
+                  管理{!dataPost ? "输入" : "修改"}
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </button>
+              )}
+            </div>
 
-            {reasonPost && (
-              <Link
-                href={`/post/${reasonPost?.id}`}
-                className="flex items-center gap-1 pt-8 text-blue-500 hover:text-blue-600"
-              >
-                根因分析
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            )}
+            <div className="flex items-center justify-start gap-12 pt-8">
+              {reasonPost && (
+                <Link
+                  href={`/post/${reasonPost?.id}`}
+                  className="flex items-center gap-1 text-blue-500 hover:text-blue-600"
+                >
+                  根因分析
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              )}
+              {session.data?.user.role === "admin" && (
+                <button
+                  className="flex items-center text-blue-500 hover:text-blue-600"
+                  onClick={() =>
+                    router.push(
+                      `/post/new?mainId=${main?.id}&type=reason` +
+                        (!reasonPost ? "" : `&postId=${reasonPost?.id}`),
+                    )
+                  }
+                >
+                  管理{!reasonPost ? "输入" : "修改"}
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -108,15 +144,31 @@ export default function Home4({ main }: Home4Props) {
                 )}
               </div>
             </div>
-            {planPost && (
-              <Link
-                href={`/post/${planPost?.id}`}
-                className="inline-flex items-center text-blue-500 hover:text-blue-600"
-              >
-                方案讨论
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            )}
+            <div className="flex items-center justify-start gap-12">
+              {planPost && (
+                <Link
+                  href={`/post/${planPost?.id}`}
+                  className="inline-flex items-center text-blue-500 hover:text-blue-600"
+                >
+                  方案讨论
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              )}
+              {session.data?.user.role === "admin" && (
+                <button
+                  className="flex items-center text-blue-500 hover:text-blue-600"
+                  onClick={() =>
+                    router.push(
+                      `/post/new?mainId=${main?.id}&type=plan` +
+                        (!planPost ? "" : `&postId=${planPost?.id}`),
+                    )
+                  }
+                >
+                  管理{!planPost ? "输入" : "修改"}
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

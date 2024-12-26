@@ -1,4 +1,4 @@
-import { Home, MessageCircle, User } from "lucide-react";
+import { CircleUserRound, Home, Logs } from "lucide-react";
 
 // 一级导航
 export const mainNavItems = [
@@ -9,10 +9,10 @@ export const mainNavItems = [
     id: "main",
     label: "主页",
     href: "/main",
-    icon: MessageCircle,
+    icon: CircleUserRound,
   },
   // 帖子
-  { id: "post", label: "帖子", href: "/post", icon: User },
+  { id: "post", label: "帖子", href: "/post", icon: Logs },
 ];
 
 // 一级路由

@@ -69,7 +69,7 @@ export default function MainPage() {
       </div>
 
       {/* Page indicators */}
-      <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 transform gap-2">
+      <div className="absolute bottom-8 right-8 flex gap-2">
         {[0, 1].map((index) => (
           <div
             key={index}

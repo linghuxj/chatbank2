@@ -97,6 +97,8 @@ export const postRouter = createTRPCRouter({
         title: z.string().min(1),
         content: z.string().min(1),
         summary: z.string().optional(),
+        mainId: z.string().optional(),
+        type: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -107,6 +109,8 @@ export const postRouter = createTRPCRouter({
           title: input.title,
           content: input.content,
           summary: input.summary,
+          mainId: input.mainId,
+          type: input.type,
         })
         .returning();
 
@@ -118,6 +122,42 @@ export const postRouter = createTRPCRouter({
       }
 
       return post;
+    }),
+
+  // 更新帖子
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string().min(1),
+        content: z.string().min(1),
+        summary: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const post = await ctx.db.query.posts.findFirst({
+        where: (posts, { eq }) => eq(posts.id, input.id),
+      });
+
+      if (!post || post.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Not authorized",
+        });
+      }
+
+      const [updatedPost] = await ctx.db
+        .update(posts)
+        .set({
+          title: input.title,
+          content: input.content,
+          summary: input.summary,
+          updatedAt: new Date(),
+        })
+        .where(eq(posts.id, input.id))
+        .returning();
+
+      return updatedPost;
     }),
 
   // 删除帖子（软删除）
