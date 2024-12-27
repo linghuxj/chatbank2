@@ -8,6 +8,7 @@ import {
 import { comments, posts, replies } from "@/server/db/schema";
 import { asc, desc, eq, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { createCaller } from "@/server/api/root";
 
 export const postRouter = createTRPCRouter({
   // 获取帖子列表
@@ -97,20 +98,31 @@ export const postRouter = createTRPCRouter({
         title: z.string().min(1),
         content: z.string().min(1),
         summary: z.string().optional(),
-        mainId: z.string().optional(),
-        type: z.string().optional(),
+        mainId: z.string(),
+        type: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const { title, content, summary, mainId, type } = input;
+      // mainId存在，这创建用户使用mainId的用户
+      const caller: any = createCaller(ctx);
+      const main = await caller.main.getById({ id: mainId });
+      if (!main) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Main not found",
+        });
+      }
+
       const [post] = await ctx.db
         .insert(posts)
         .values({
-          userId: ctx.session.user.id,
-          title: input.title,
-          content: input.content,
-          summary: input.summary,
-          mainId: input.mainId,
-          type: input.type,
+          userId: main.userId,
+          title,
+          content,
+          summary,
+          mainId,
+          type,
         })
         .returning();
 
