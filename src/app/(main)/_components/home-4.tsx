@@ -42,10 +42,8 @@ export default function Home4({ main }: Home4Props) {
             <div
               className={`text-muted-foreground ${isExpanded ? "" : "line-clamp-1"}`}
             >
-              <p className="whitespace-pre-line">
-                {main?.business}
-                {main?.issue}
-              </p>
+              <p className="whitespace-pre-line">{main?.business}</p>
+              <p className="whitespace-pre-line">{main?.issue}</p>
             </div>
             <div className="flex justify-end">
               <button
