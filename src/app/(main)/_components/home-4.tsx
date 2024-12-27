@@ -42,9 +42,10 @@ export default function Home4({ main }: Home4Props) {
             <div
               className={`text-muted-foreground ${isExpanded ? "" : "line-clamp-1"}`}
             >
-              {main?.business}
-              <br />
-              {main?.issue}
+              <p className="whitespace-pre-line">
+                {main?.business}
+                {main?.issue}
+              </p>
             </div>
             <div className="flex justify-end">
               <button
@@ -118,7 +119,7 @@ export default function Home4({ main }: Home4Props) {
         <div className="space-y-2">
           <h2 className="text-xl font-bold">问题与挑战</h2>
           <div className="space-y-2 pl-6 text-muted-foreground">
-            {main?.reason}
+            <p className="whitespace-pre-line">{main?.reason}</p>
           </div>
         </div>
 
@@ -129,7 +130,7 @@ export default function Home4({ main }: Home4Props) {
             <div
               className={`text-muted-foreground ${isExpanded2 ? "" : "line-clamp-2"}`}
             >
-              {planPost?.summary}
+              <p className="whitespace-pre-line">{planPost?.summary}</p>
             </div>
             <div className="flex flex-col items-end justify-end">
               <div

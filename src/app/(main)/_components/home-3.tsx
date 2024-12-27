@@ -37,7 +37,7 @@ export default function Home3({ onNext, main }: Home3Props) {
                 基于现状，贵司有望用最小代价
               </p>
               <div className="text-center text-lg">1  快速构建新增业务</div>
-              <p className="text-center text-muted-foreground">
+              <p className="text-center text-muted-foreground whitespace-pre-line">
                 {newPost?.summary}
               </p>
               <div className="flex justify-center gap-8 self-end">
@@ -69,7 +69,7 @@ export default function Home3({ onNext, main }: Home3Props) {
 
             <div className="flex flex-col space-y-2">
               <div className="text-center text-lg">2  短期实现增量收入</div>
-              <p className="text-center text-muted-foreground">
+              <p className="text-center text-muted-foreground whitespace-pre-line">
                 {incomePost?.summary}
               </p>
               <div className="flex justify-center gap-8 self-end">
@@ -101,7 +101,7 @@ export default function Home3({ onNext, main }: Home3Props) {
 
             <div className="flex flex-col space-y-2">
               <div className="text-center text-lg">3 打造持续的竞争力</div>
-              <p className="text-center text-muted-foreground">
+              <p className="text-center text-muted-foreground whitespace-pre-line">
                 {competitivePost?.summary}
               </p>
               <div className="flex justify-center gap-8 self-end">
