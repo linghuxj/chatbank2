@@ -22,7 +22,7 @@ export default function HomePage() {
 
         <div className="flex flex-col items-center space-y-24 pt-32 text-center">
           <Link
-            href={!mains ? `/publish` : `/main?id=${mains.id}`}
+            href={!mains ? `#` : `/main?id=${mains.id}`}
             className="flex items-center text-blue-600 transition-colors hover:text-blue-700"
           >
             <span>{!mains ? "现有业务改进" : "查看已有业务改进"}</span>

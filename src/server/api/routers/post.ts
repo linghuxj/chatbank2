@@ -95,15 +95,16 @@ export const postRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        title: z.string().min(1),
-        content: z.string().min(1),
+        title: z.string().optional(),
+        content: z.string().optional(),
         summary: z.string().optional(),
+        summaryLabel: z.string().optional(),
         mainId: z.string(),
         type: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { title, content, summary, mainId, type } = input;
+      const { title, content, summaryLabel, summary, mainId, type } = input;
       // mainId存在，这创建用户使用mainId的用户
       const caller: any = createCaller(ctx);
       const main = await caller.main.getById({ id: mainId });
@@ -118,9 +119,10 @@ export const postRouter = createTRPCRouter({
         .insert(posts)
         .values({
           userId: main.userId,
-          title,
-          content,
+          title: title ?? "title",
+          content: content ?? "content",
           summary,
+          summaryLabel,
           mainId,
           type,
         })
@@ -141,9 +143,10 @@ export const postRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        title: z.string().min(1),
-        content: z.string().min(1),
+        title: z.string().optional(),
+        content: z.string().optional(),
         summary: z.string().optional(),
+        summaryLabel: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -151,7 +154,14 @@ export const postRouter = createTRPCRouter({
         where: (posts, { eq }) => eq(posts.id, input.id),
       });
 
-      if (!post || post.userId !== ctx.session.user.id) {
+      if (
+        !post ||
+        (post.userId !== ctx.session.user.id &&
+          ctx.session?.user?.role !== "admin")
+      ) {
+        console.log(post);
+        console.log(ctx.session.user.id);
+        console.log(ctx.session?.user?.role);
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Not authorized",
@@ -161,9 +171,10 @@ export const postRouter = createTRPCRouter({
       const [updatedPost] = await ctx.db
         .update(posts)
         .set({
-          title: input.title,
-          content: input.content,
-          summary: input.summary,
+          title: input.title ?? post.title,
+          content: input.content ?? post.content,
+          summary: input.summary ?? post.summary,
+          summaryLabel: input.summaryLabel ?? post.summaryLabel,
           updatedAt: new Date(),
         })
         .where(eq(posts.id, input.id))

@@ -14,11 +14,14 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/lib/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { Switch } from "@/components/ui/switch";
 
 const createPostSchema = z.object({
-  title: z.string().min(1, "标题不能为空"),
-  content: z.string().min(1, "内容不能为空"),
+  title: z.string().optional(),
+  content: z.string().optional(),
   summary: z.string().optional(),
+  summaryLabel: z.string().optional(),
+  hasSubPage: z.boolean().default(false),
 });
 
 type FormData = z.infer<typeof createPostSchema>;
@@ -48,9 +51,13 @@ export default function NewPostPage() {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(createPostSchema),
+    defaultValues: {
+      hasSubPage: false,
+    },
   });
 
   useEffect(() => {
@@ -58,6 +65,8 @@ export default function NewPostPage() {
       setValue("title", post.data.title);
       setValue("content", post.data.content);
       setValue("summary", post.data.summary ?? "");
+      setValue("summaryLabel", post.data.summaryLabel ?? "");
+      setValue("hasSubPage", post.data.hasSubPage);
     }
   }, [post.data, setValue]);
 
@@ -125,7 +134,11 @@ export default function NewPostPage() {
       } else {
         // 创建模式
         if (!mainId || !type) {
-          throw new Error("参数错误");
+          toast({
+            title: "参数错误",
+            variant: "destructive",
+          });
+          return;
         }
         await createPost.mutateAsync({
           ...data,
@@ -133,6 +146,12 @@ export default function NewPostPage() {
           type,
         });
       }
+    } catch (error) {
+      toast({
+        title: "操作失败",
+        description: error instanceof Error ? error.message : "未知错误",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -167,18 +186,19 @@ export default function NewPostPage() {
       <div className="mx-auto w-full max-w-xl p-6 md:max-w-4xl">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-lg">
-              标题
+            <Label htmlFor="summaryLabel" className="text-lg">
+              一级页面标题 (可选，即主管页或者客观页显示标题)
             </Label>
-            <Input id="title" {...register("title")} placeholder="请输入标题" />
-            {errors.title && (
-              <p className="text-sm text-destructive">{errors.title.message}</p>
-            )}
+            <Input
+              id="summaryLabel"
+              {...register("summaryLabel")}
+              placeholder="请输入摘要标题"
+            />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="summary" className="text-lg">
-              摘要 (可选，即主管页或者客观页显示内容)
+              一级页面内容 (可选，即主管页或者客观页显示内容)
             </Label>
             <Textarea
               id="summary"
@@ -188,22 +208,43 @@ export default function NewPostPage() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="content" className="text-lg">
-              内容
-            </Label>
-            <Textarea
-              id="content"
-              {...register("content")}
-              rows={10}
-              placeholder="请输入内容"
+          <div className="flex items-center gap-2">
+            <Switch
+              id="hasSubPage"
+              checked={watch("hasSubPage")}
+              onCheckedChange={(checked) => setValue("hasSubPage", checked)}
             />
-            {errors.content && (
-              <p className="text-sm text-destructive">
-                {errors.content.message}
-              </p>
-            )}
+            <Label htmlFor="hasSubPage">
+              是否显示确认页（即可查看的二级页面）
+            </Label>
           </div>
+
+          {watch("hasSubPage") && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="title" className="text-lg">
+                  确认页标题（可选，即二级页面标题）
+                </Label>
+                <Input
+                  id="title"
+                  {...register("title")}
+                  placeholder="请输入标题"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="content" className="text-lg">
+                  确认页内容（可选，即二级页面内容）
+                </Label>
+                <Textarea
+                  id="content"
+                  {...register("content")}
+                  rows={5}
+                  placeholder="请输入内容"
+                />
+              </div>
+            </>
+          )}
 
           <div className="flex gap-12">
             <Button type="submit" disabled={isSubmitting} className="flex-1">

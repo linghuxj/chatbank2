@@ -26,20 +26,26 @@ export default function Home3({ onNext, main }: Home3Props) {
       {/* Content section */}
       <div className="flex-1 space-y-6">
         <div className="px-8 pb-4 pt-8">
-          <h2 className="text-2xl font-bold">基于贵司现有业务的发展建议</h2>
-          <span className="mb-8 text-muted-foreground">@{main?.user.name}</span>
+          <h2 className="text-2xl font-bold">现有财税诊断业务的发展建议</h2>
+          <span className="mb-8 text-muted-foreground">@财智领航公司</span>
 
           <Separator className="my-4" />
 
           <div className="space-y-12">
             <div className="flex flex-col space-y-2">
               <p className="text-center text-muted-foreground">
-                基于现状，贵司有望用最小代价
+                突破现有业务瓶颈的
               </p>
-              <div className="text-center text-lg">1  快速构建新增业务</div>
-              <p className="text-center text-muted-foreground whitespace-pre-line">
-                {newPost?.summary}
-              </p>
+              {newPost && (
+                <>
+                  <div className="text-center text-lg">
+                    {newPost.summaryLabel}
+                  </div>
+                  <p className="whitespace-pre-line text-center text-muted-foreground">
+                    {newPost.summary}
+                  </p>
+                </>
+              )}
               <div className="flex justify-center gap-8 self-end">
                 {session.data?.user.role === "admin" && (
                   <button
@@ -68,10 +74,16 @@ export default function Home3({ onNext, main }: Home3Props) {
             </div>
 
             <div className="flex flex-col space-y-2">
-              <div className="text-center text-lg">2  短期实现增量收入</div>
-              <p className="text-center text-muted-foreground whitespace-pre-line">
-                {incomePost?.summary}
-              </p>
+              {incomePost && (
+                <>
+                  <div className="text-center text-lg">
+                    {incomePost.summaryLabel}
+                  </div>
+                  <p className="whitespace-pre-line text-center text-muted-foreground">
+                    {incomePost.summary}
+                  </p>
+                </>
+              )}
               <div className="flex justify-center gap-8 self-end">
                 {session.data?.user.role === "admin" && (
                   <button
@@ -100,10 +112,16 @@ export default function Home3({ onNext, main }: Home3Props) {
             </div>
 
             <div className="flex flex-col space-y-2">
-              <div className="text-center text-lg">3 打造持续的竞争力</div>
-              <p className="text-center text-muted-foreground whitespace-pre-line">
-                {competitivePost?.summary}
-              </p>
+              {competitivePost && (
+                <>
+                  <div className="text-center text-lg">
+                    {competitivePost.summaryLabel}
+                  </div>
+                  <p className="whitespace-pre-line text-center text-muted-foreground">
+                    {competitivePost.summary}
+                  </p>
+                </>
+              )}
               <div className="flex justify-center gap-8 self-end">
                 {session.data?.user.role === "admin" && (
                   <button
@@ -144,7 +162,7 @@ export default function Home3({ onNext, main }: Home3Props) {
                     )
                   }
                 >
-                  管理{!stepPost ? "输入" : "修改"}
+                  管理{!stepPost ? "输入" : "修改"}(简单几步)
                   <ChevronRight className="ml-1 h-4 w-4" />
                 </button>
               )}
@@ -162,16 +180,6 @@ export default function Home3({ onNext, main }: Home3Props) {
                 </div>
               )}
             </div>
-
-            {!main?.posts && (
-              <div
-                className="flex items-center justify-center gap-1 pt-12 text-blue-500 hover:text-blue-600"
-                onClick={() => router.push(`/publish`)}
-              >
-                去输入
-                <ChevronRight className="h-4 w-4" />
-              </div>
-            )}
 
             <div
               className="flex items-center justify-center gap-1 text-muted-foreground"

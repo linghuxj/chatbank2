@@ -8,24 +8,35 @@ import { useSearchParams } from "next/navigation";
 
 export default function MainPage() {
   const [currentPage, setCurrentPage] = useState(0);
+  const [maxPages, setMaxPages] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
   const startX = useRef(0);
 
   const params = useSearchParams();
   const id = params.get("id");
 
+  useEffect(() => {
+    if (id === "1") {
+      setMaxPages(2);
+    }
+  }, [id]);
+
   const { data: main } = api.main.getById.useQuery({ id: id ?? "" });
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (maxPages <= 1) return;
+
     startX.current = e.touches[0]?.clientX ?? 0;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
+    if (maxPages <= 1) return;
+
     const endX = e.changedTouches[0]?.clientX ?? 0;
     const diff = startX.current - endX;
 
     if (Math.abs(diff) > 50) {
-      if (diff > 0 && currentPage < 2) {
+      if (diff > 0 && currentPage < maxPages) {
         setCurrentPage(currentPage + 1);
       } else if (diff < 0 && currentPage > 0) {
         setCurrentPage(currentPage - 1);
@@ -34,16 +45,18 @@ export default function MainPage() {
   };
 
   const handleNextPage = () => {
-    if (currentPage < 1) {
+    if (maxPages <= 1) return;
+
+    if (currentPage < maxPages - 1) {
       setCurrentPage(currentPage + 1);
     }
   };
 
   useEffect(() => {
-    if (containerRef.current) {
+    if (containerRef.current && maxPages > 1) {
       containerRef.current.style.transform = `translateX(-${currentPage * 100}%)`;
     }
-  }, [currentPage]);
+  }, [currentPage, maxPages]);
 
   return (
     <div
@@ -62,7 +75,7 @@ export default function MainPage() {
         {/* <Home2 onNext={handleNextPage} /> */}
 
         {/* Page 3 */}
-        <Home3 onNext={handleNextPage} main={main} />
+        {maxPages > 1 && <Home3 onNext={handleNextPage} main={main} />}
 
         {/* Page 4 */}
         <Home4 main={main} />
@@ -70,7 +83,7 @@ export default function MainPage() {
 
       {/* Page indicators */}
       <div className="absolute bottom-8 right-8 flex gap-2">
-        {[0, 1].map((index) => (
+        {Array.from({ length: maxPages }, (_, index) => (
           <div
             key={index}
             className={`h-2 w-2 rounded-full ${

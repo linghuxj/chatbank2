@@ -4,9 +4,15 @@ import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { api } from "@/trpc/react";
 import { PostCard } from "../_components/post-card";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function PostPage() {
+  const session = useSession();
+  const router = useRouter();
   const { ref, inView } = useInView({
     threshold: 0,
     rootMargin: "300px 0px",
@@ -53,6 +59,19 @@ export default function PostPage() {
 
   return (
     <div className="container mx-auto p-4">
+      {session.data?.user.role === "admin" && (
+        <div className="mb-4 flex flex-col items-center justify-center space-y-2">
+          <Button
+            className="flex items-center gap-2 self-end"
+            onClick={() => router.push("/main/new")}
+          >
+            新增
+            <Plus className="h-4 w-4" />
+          </Button>
+          <Separator />
+        </div>
+      )}
+
       <div className="space-y-4">
         {mains.map((main, i) => (
           <div key={i} className="space-y-4">

@@ -137,6 +137,7 @@ export const mainRouter = createTRPCRouter({
         business: z.string().optional(),
         issue: z.string().optional(),
         reason: z.string().optional(),
+        type: z.enum(["post", "suggestion"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -148,6 +149,7 @@ export const mainRouter = createTRPCRouter({
           business: input.business,
           issue: input.issue,
           reason: input.reason,
+          type: input.type,
         })
         .returning();
 

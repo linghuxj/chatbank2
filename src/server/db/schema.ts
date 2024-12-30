@@ -125,6 +125,7 @@ export const mains = createTable("main", {
     .notNull()
     .references(() => users.id),
   title: varchar("title", { length: 255 }).notNull(),
+  type: varchar("type", { length: 31 }).notNull().default("post"), // post 帖子, suggestion 建议
   business: text("business"),
   issue: text("issue"),
   reason: text("reason"),
@@ -158,7 +159,9 @@ export const posts = createTable("post", {
   type: varchar("type", { length: 31 }).notNull().default("new"), // new 新增业务, income 增量收入, competitive 竞争力, step 关键步骤, data 数据显示, reason 原因, plan 方案
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content").notNull(), // Markdown 内容
-  summary: varchar("summary", { length: 500 }), // 文章摘要
+  hasSubPage: boolean("has_sub_page").notNull().default(false), // 是否显示确认页（即可查看的二级页面）
+  summaryLabel: varchar("summary_label", { length: 255 }), // 摘要标签
+  summary: text("summary"), // 文章摘要
   remarks: text("remarks"), // 备注
   commentCount: integer("comment_count").notNull().default(0), // 评论数
   status: varchar("status", { length: 31 }).notNull().default("published"), // published, draft, deleted
