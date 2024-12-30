@@ -164,6 +164,22 @@ export const mainRouter = createTRPCRouter({
       return main;
     }),
 
+  // 更新主题
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string().optional(),
+        maxPage: z.number().min(1).max(3),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db
+        .update(mains)
+        .set({ title: input.title, maxPage: input.maxPage })
+        .where(eq(mains.id, input.id));
+    }),
+
   // 删除主题
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))

@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/trpc/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
+const SUBJECTIVE = 0b01; // 1
+const OBJECTIVE = 0b10; // 2
+
 const createMainSchema = z.object({
   title: z.string().min(1, "标题不能为空"),
   type: z.enum(["post", "suggestion"], {
@@ -31,10 +34,16 @@ const createMainSchema = z.object({
 });
 
 type FormData = z.infer<typeof createMainSchema>;
-
 export default function MainNewPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { data: existingMain } = api.main.getById.useQuery(
+    { id: id ?? "" },
+    { enabled: !!id },
+  );
 
   const {
     register,
@@ -43,6 +52,14 @@ export default function MainNewPage() {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(createMainSchema),
+    values: existingMain
+      ? {
+          title: existingMain.title,
+          type: existingMain.type as "post" | "suggestion",
+          hasSubjective: Boolean(existingMain.maxPage & SUBJECTIVE),
+          hasObjective: Boolean(existingMain.maxPage & OBJECTIVE),
+        }
+      : undefined,
   });
 
   const createMain = api.main.create.useMutation({
@@ -55,26 +72,47 @@ export default function MainNewPage() {
     },
   });
 
+  const updateMain = api.main.update.useMutation({
+    onSuccess: () => {
+      toast({
+        title: "更新成功",
+        description: "内容已更新，正在跳转...",
+      });
+      router.push(`/main?id=${id}`);
+    },
+  });
+
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    const subjective = data.hasSubjective ? 0 : 1;
-    const objective = data.hasObjective ? 0 : 2;
-    const maxPage = subjective + objective;
+    const maxPage =
+      (data.hasSubjective ? SUBJECTIVE : 0) |
+      (data.hasObjective ? OBJECTIVE : 0);
+
     if (maxPage === 0) {
       toast({
         title: "请至少选择一个页面",
         variant: "destructive",
       });
+      setIsSubmitting(false);
       return;
     }
+
     try {
-      await createMain.mutateAsync({
-        ...data,
-        maxPage,
-      });
+      if (id) {
+        await updateMain.mutateAsync({
+          id,
+          title: data.title,
+          maxPage,
+        });
+      } else {
+        await createMain.mutateAsync({
+          ...data,
+          maxPage,
+        });
+      }
     } catch (error) {
       toast({
-        title: "创建失败",
+        title: id ? "更新失败" : "创建失败",
         description: error instanceof Error ? error.message : "未知错误",
         variant: "destructive",
       });
@@ -85,7 +123,7 @@ export default function MainNewPage() {
 
   return (
     <>
-      <SubHeader title="创建新主题" />
+      <SubHeader title={id ? "编辑主题" : "创建新主题"} />
       <div className="mx-auto w-full max-w-xl p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
@@ -103,6 +141,7 @@ export default function MainNewPage() {
               类型
             </Label>
             <Select
+              value={existingMain?.type ?? undefined}
               onValueChange={(value) =>
                 setValue("type", value as "post" | "suggestion")
               }
@@ -125,6 +164,11 @@ export default function MainNewPage() {
               <Switch
                 id="hasSubjective"
                 {...register("hasSubjective")}
+                checked={
+                  existingMain
+                    ? Boolean(existingMain.maxPage & SUBJECTIVE)
+                    : false
+                }
                 onCheckedChange={(checked) =>
                   setValue("hasSubjective", checked)
                 }
@@ -135,6 +179,11 @@ export default function MainNewPage() {
               <Switch
                 id="hasObjective"
                 {...register("hasObjective")}
+                checked={
+                  existingMain
+                    ? Boolean(existingMain.maxPage & OBJECTIVE)
+                    : false
+                }
                 onCheckedChange={(checked) => setValue("hasObjective", checked)}
               />
               <Label htmlFor="hasObjective">是否显示客观页</Label>
@@ -145,8 +194,10 @@ export default function MainNewPage() {
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                提交中...
+                {id ? "更新中..." : "提交中..."}
               </>
+            ) : id ? (
+              "更新"
             ) : (
               "创建"
             )}
