@@ -8,35 +8,28 @@ import { useSearchParams } from "next/navigation";
 
 export default function MainPage() {
   const [currentPage, setCurrentPage] = useState(0);
-  const [maxPages, setMaxPages] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
   const startX = useRef(0);
 
   const params = useSearchParams();
   const id = params.get("id");
 
-  useEffect(() => {
-    if (id === "1") {
-      setMaxPages(2);
-    }
-  }, [id]);
-
   const { data: main } = api.main.getById.useQuery({ id: id ?? "" });
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (maxPages <= 1) return;
+    if (main?.maxPage < 3) return;
 
     startX.current = e.touches[0]?.clientX ?? 0;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (maxPages <= 1) return;
+    if (main?.maxPage < 3) return;
 
     const endX = e.changedTouches[0]?.clientX ?? 0;
     const diff = startX.current - endX;
 
     if (Math.abs(diff) > 50) {
-      if (diff > 0 && currentPage < maxPages) {
+      if (diff > 0 && currentPage < 2) {
         setCurrentPage(currentPage + 1);
       } else if (diff < 0 && currentPage > 0) {
         setCurrentPage(currentPage - 1);
@@ -45,18 +38,18 @@ export default function MainPage() {
   };
 
   const handleNextPage = () => {
-    if (maxPages <= 1) return;
+    if (main?.maxPage <= 2) return;
 
-    if (currentPage < maxPages - 1) {
+    if (currentPage < 2) {
       setCurrentPage(currentPage + 1);
     }
   };
 
   useEffect(() => {
-    if (containerRef.current && maxPages > 1) {
+    if (containerRef.current && main?.maxPage === 3) {
       containerRef.current.style.transform = `translateX(-${currentPage * 100}%)`;
     }
-  }, [currentPage, maxPages]);
+  }, [currentPage, main]);
 
   return (
     <div
@@ -75,15 +68,17 @@ export default function MainPage() {
         {/* <Home2 onNext={handleNextPage} /> */}
 
         {/* Page 3 */}
-        {maxPages > 1 && <Home3 onNext={handleNextPage} main={main} />}
+        {(main?.maxPage === 1 || main?.maxPage === 3) && (
+          <Home3 onNext={handleNextPage} main={main} />
+        )}
 
         {/* Page 4 */}
-        <Home4 main={main} />
+        {(main?.maxPage === 2 || main?.maxPage === 3) && <Home4 main={main} />}
       </div>
 
       {/* Page indicators */}
       <div className="absolute bottom-8 right-8 flex gap-2">
-        {Array.from({ length: maxPages }, (_, index) => (
+        {Array.from({ length: main?.maxPage === 3 ? 2 : 1 }, (_, index) => (
           <div
             key={index}
             className={`h-2 w-2 rounded-full ${

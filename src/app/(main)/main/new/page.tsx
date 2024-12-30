@@ -19,12 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const createMainSchema = z.object({
   title: z.string().min(1, "标题不能为空"),
   type: z.enum(["post", "suggestion"], {
     required_error: "请选择类型",
   }),
+  hasSubjective: z.boolean().default(false),
+  hasObjective: z.boolean().default(false),
 });
 
 type FormData = z.infer<typeof createMainSchema>;
@@ -54,8 +57,21 @@ export default function MainNewPage() {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
+    const subjective = data.hasSubjective ? 0 : 1;
+    const objective = data.hasObjective ? 0 : 2;
+    const maxPage = subjective + objective;
+    if (maxPage === 0) {
+      toast({
+        title: "请至少选择一个页面",
+        variant: "destructive",
+      });
+      return;
+    }
     try {
-      await createMain.mutateAsync(data);
+      await createMain.mutateAsync({
+        ...data,
+        maxPage,
+      });
     } catch (error) {
       toast({
         title: "创建失败",
@@ -102,6 +118,27 @@ export default function MainNewPage() {
             {errors.type && (
               <p className="text-sm text-red-500">{errors.type.message}</p>
             )}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Switch
+                id="hasSubjective"
+                {...register("hasSubjective")}
+                onCheckedChange={(checked) =>
+                  setValue("hasSubjective", checked)
+                }
+              />
+              <Label htmlFor="hasSubjective">是否显示主观页</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch
+                id="hasObjective"
+                {...register("hasObjective")}
+                onCheckedChange={(checked) => setValue("hasObjective", checked)}
+              />
+              <Label htmlFor="hasObjective">是否显示客观页</Label>
+            </div>
           </div>
 
           <Button type="submit" disabled={isSubmitting} className="w-full">

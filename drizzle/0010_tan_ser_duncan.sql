@@ -1,0 +1,1 @@
+ALTER TABLE "chatbank2_main" ADD COLUMN "max_page" integer DEFAULT 1 NOT NULL;

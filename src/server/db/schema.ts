@@ -126,6 +126,7 @@ export const mains = createTable("main", {
     .references(() => users.id),
   title: varchar("title", { length: 255 }).notNull(),
   type: varchar("type", { length: 31 }).notNull().default("post"), // post 帖子, suggestion 建议
+  maxPage: integer("max_page").notNull().default(1),
   business: text("business"),
   issue: text("issue"),
   reason: text("reason"),

@@ -56,7 +56,9 @@ export default function Home4({ main }: Home4Props) {
     <div className="flex h-full min-w-full flex-col overflow-y-auto px-8 pb-24 pt-8">
       {/* Header section */}
       <div className="mb-2">
-        <h1 className="font-semibold">案例讨论</h1>
+        <h1 className="font-semibold">
+          {main?.type === "post" ? "案例讨论" : "意见征集"}
+        </h1>
       </div>
 
       {/* Content section */}

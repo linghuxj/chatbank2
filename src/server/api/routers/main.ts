@@ -138,6 +138,7 @@ export const mainRouter = createTRPCRouter({
         issue: z.string().optional(),
         reason: z.string().optional(),
         type: z.enum(["post", "suggestion"]),
+        maxPage: z.number().min(1).max(3),
       }),
     )
     .mutation(async ({ ctx, input }) => {
