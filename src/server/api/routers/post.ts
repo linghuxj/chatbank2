@@ -99,12 +99,21 @@ export const postRouter = createTRPCRouter({
         content: z.string().optional(),
         summary: z.string().optional(),
         summaryLabel: z.string().optional(),
+        hasSubPage: z.boolean().default(false),
         mainId: z.string(),
         type: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { title, content, summaryLabel, summary, mainId, type } = input;
+      const {
+        title,
+        content,
+        summaryLabel,
+        summary,
+        mainId,
+        type,
+        hasSubPage,
+      } = input;
       // mainId存在，这创建用户使用mainId的用户
       const caller: any = createCaller(ctx);
       const main = await caller.main.getById({ id: mainId });
@@ -125,6 +134,7 @@ export const postRouter = createTRPCRouter({
           summaryLabel,
           mainId,
           type,
+          hasSubPage,
         })
         .returning();
 
@@ -147,6 +157,7 @@ export const postRouter = createTRPCRouter({
         content: z.string().optional(),
         summary: z.string().optional(),
         summaryLabel: z.string().optional(),
+        hasSubPage: z.boolean().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -159,9 +170,6 @@ export const postRouter = createTRPCRouter({
         (post.userId !== ctx.session.user.id &&
           ctx.session?.user?.role !== "admin")
       ) {
-        console.log(post);
-        console.log(ctx.session.user.id);
-        console.log(ctx.session?.user?.role);
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Not authorized",
@@ -175,6 +183,7 @@ export const postRouter = createTRPCRouter({
           content: input.content ?? post.content,
           summary: input.summary ?? post.summary,
           summaryLabel: input.summaryLabel ?? post.summaryLabel,
+          hasSubPage: input.hasSubPage ?? post.hasSubPage,
           updatedAt: new Date(),
         })
         .where(eq(posts.id, input.id))
